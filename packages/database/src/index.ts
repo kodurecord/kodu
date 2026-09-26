@@ -37,4 +37,25 @@ export type { AnalysisRepository } from "./repositories/analysis";
 export { createProvenanceRepository } from "./repositories/provenance";
 export type { ProvenanceRepository } from "./repositories/provenance";
 
+export { createPersonRepository } from "./repositories/person";
+export type { PersonRepository } from "./repositories/person";
+
+export { createVisitorRepository, createSessionRepository } from "./repositories/visitor";
+export type { VisitorRepository, SessionRepository } from "./repositories/visitor";
+
+export { createEventRepository } from "./repositories/event";
+export type { EventRepository } from "./repositories/event";
+
+export {
+  createGeneratedReportRepository,
+  createEmailDeliveryRepository,
+} from "./repositories/generated-report";
+export type {
+  GeneratedReportRepository,
+  EmailDeliveryRepository,
+} from "./repositories/generated-report";
+
+export { createConsentRepository } from "./repositories/consent";
+export type { ConsentRepository } from "./repositories/consent";
+
 export { ulid } from "./ulid";

@@ -391,6 +391,206 @@
     .screen { display: none; }
     .screen.active { display: block; }
 
+    /* ── PDF CTA ──────────────────────────────────────────────────── */
+    .pdf-cta {
+      background: var(--k-navy);
+      border-radius: var(--k-radius-xl);
+      padding: 28px 24px;
+      margin-top: 16px;
+      text-align: center;
+      color: var(--k-navy-text);
+    }
+    .pdf-cta-headline {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      color: #fff;
+    }
+    .pdf-cta-sub {
+      font-size: 14px;
+      color: rgba(255,255,255,0.65);
+      margin-bottom: 20px;
+      line-height: 1.6;
+    }
+    .pdf-cta-bullets {
+      text-align: left;
+      margin: 0 auto 20px;
+      max-width: 340px;
+      list-style: none;
+      padding: 0;
+    }
+    .pdf-cta-bullets li {
+      font-size: 13px;
+      color: rgba(255,255,255,0.8);
+      padding: 4px 0;
+      padding-left: 20px;
+      position: relative;
+    }
+    .pdf-cta-bullets li::before {
+      content: '✓';
+      position: absolute;
+      left: 0;
+      color: var(--k-brand-2);
+      font-weight: 700;
+    }
+    .btn-cta-report {
+      background: var(--k-brand);
+      color: #fff;
+      padding: 14px 32px;
+      border-radius: var(--k-radius-pill);
+      font-size: 16px;
+      font-weight: 700;
+      display: inline-block;
+      transition: background 0.15s, transform 0.1s;
+    }
+    .btn-cta-report:hover { background: var(--k-brand-2); }
+    .btn-cta-report:active { transform: scale(0.97); }
+    .pdf-cta-note {
+      font-size: 12px;
+      color: rgba(255,255,255,0.4);
+      margin-top: 12px;
+    }
+
+    /* ── Report modal ─────────────────────────────────────────────── */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(10,20,40,0.55);
+      backdrop-filter: blur(3px);
+      z-index: 200;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+    .modal-backdrop.open { display: flex; }
+    .modal {
+      background: var(--k-surface);
+      border-radius: var(--k-radius-xl);
+      box-shadow: var(--k-shadow-lg);
+      padding: 32px 28px;
+      max-width: 440px;
+      width: 100%;
+      position: relative;
+    }
+    .modal-close {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      background: var(--k-bg);
+      border: none;
+      border-radius: var(--k-radius-pill);
+      width: 32px;
+      height: 32px;
+      font-size: 16px;
+      cursor: pointer;
+      color: var(--k-slate);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .modal-close:hover { background: var(--k-rule); }
+    .modal-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--k-ink);
+      margin-bottom: 6px;
+    }
+    .modal-sub {
+      font-size: 14px;
+      color: var(--k-slate);
+      margin-bottom: 24px;
+      line-height: 1.5;
+    }
+    .modal-field { margin-bottom: 16px; }
+    .modal-field label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--k-ink-2);
+      margin-bottom: 6px;
+    }
+    .modal-field input[type="text"],
+    .modal-field input[type="email"] {
+      display: block;
+      width: 100%;
+      padding: 11px 14px;
+      border: 1.5px solid var(--k-rule);
+      border-radius: var(--k-radius-md);
+      background: var(--k-bg);
+      color: var(--k-ink);
+      font-size: 15px;
+      transition: border-color 0.15s, box-shadow 0.15s;
+      outline: none;
+    }
+    .modal-field input:focus {
+      border-color: var(--k-brand);
+      box-shadow: 0 0 0 3px var(--k-brand-soft);
+    }
+    .modal-checkbox {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 14px;
+      border: 1.5px solid var(--k-rule);
+      border-radius: var(--k-radius-md);
+      background: var(--k-bg);
+      cursor: pointer;
+      margin-bottom: 20px;
+    }
+    .modal-checkbox input[type="checkbox"] {
+      width: 16px;
+      height: 16px;
+      flex-shrink: 0;
+      margin-top: 2px;
+      accent-color: var(--k-brand);
+      cursor: pointer;
+    }
+    .modal-checkbox-text {
+      font-size: 13px;
+      color: var(--k-slate);
+      line-height: 1.5;
+    }
+    .modal-legal {
+      font-size: 11px;
+      color: var(--k-slate-2);
+      line-height: 1.6;
+      margin-top: 12px;
+    }
+    .btn-submit-report {
+      background: var(--k-brand);
+      color: #fff;
+      width: 100%;
+      padding: 14px;
+      border-radius: var(--k-radius-pill);
+      font-size: 15px;
+      font-weight: 700;
+      transition: background 0.15s;
+    }
+    .btn-submit-report:hover { background: var(--k-brand-2); }
+    .btn-submit-report:disabled { background: var(--k-slate-3); cursor: not-allowed; }
+
+    /* ── Report success state ─────────────────────────────────────── */
+    .report-sent {
+      text-align: center;
+      padding: 16px 0 8px;
+    }
+    .report-sent-icon {
+      font-size: 48px;
+      margin-bottom: 12px;
+    }
+    .report-sent-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--k-ink);
+      margin-bottom: 8px;
+    }
+    .report-sent-sub {
+      font-size: 14px;
+      color: var(--k-slate);
+      line-height: 1.6;
+    }
+
     /* Toast */
     #toast {
       position: fixed;
@@ -587,6 +787,61 @@
   </main>
 </div>
 
+<!-- ── Report request modal ─────────────────────────────────────────────── -->
+<div class="modal-backdrop" id="report-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+  <div class="modal">
+    <button class="modal-close" onclick="closeReportModal()" aria-label="Close">✕</button>
+
+    <!-- Form state -->
+    <div id="modal-form-state">
+      <div class="modal-title" id="modal-title">Get your KODU Repair Report</div>
+      <div class="modal-sub">We'll email you a clean PDF summary of this analysis — yours to keep and share.</div>
+
+      <div class="modal-field">
+        <label for="modal-first-name">First name</label>
+        <input type="text" id="modal-first-name" placeholder="Alex" autocomplete="given-name" />
+      </div>
+      <div class="modal-field">
+        <label for="modal-email">Email address</label>
+        <input type="email" id="modal-email" placeholder="you@example.com" autocomplete="email" />
+      </div>
+
+      <label class="modal-checkbox">
+        <input type="checkbox" id="modal-marketing-opt-in" />
+        <span class="modal-checkbox-text">
+          Send me tips on home maintenance, seasonal reminders, and ways KODU can help me make smarter home decisions.
+          <strong>(Optional — unchecked by default)</strong>
+        </span>
+      </label>
+
+      <button class="btn-submit-report" id="btn-submit-report" disabled onclick="submitReportRequest()">
+        Email me the report
+      </button>
+
+      <div class="modal-legal">
+        By submitting, you agree to receive your requested repair report by email.
+        Unsubscribe at any time. We never sell your information.
+        See our <a href="https://kodu.com/privacy" target="_blank" rel="noopener">Privacy Policy</a>.
+      </div>
+    </div>
+
+    <!-- Success state -->
+    <div id="modal-success-state" style="display:none">
+      <div class="report-sent">
+        <div class="report-sent-icon">📬</div>
+        <div class="report-sent-title">Your report is on its way!</div>
+        <div class="report-sent-sub">
+          Check your inbox — we've sent your full KODU Repair Report to
+          <strong id="modal-success-email"></strong>.
+          <br><br>
+          It includes this analysis, the key factors, and context to help you
+          make the right call for your home.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div id="toast"></div>
 
 <script>
@@ -600,7 +855,134 @@ const state = {
   repairEventId: null,
   selectedUrgency: null,
   analysisId: null,
+  // Identity
+  visitorId: null,
+  sessionId: null,
+  // Report modal
+  reportSubmitted: false,
 };
+
+// ── Identity: visitor + session ────────────────────────────────────────────
+function generateULID() {
+  // Crockford Base32 alphabet
+  const ENCODING = '0123456789ABCDEFGHJKMNPQRSTVWXYZ';
+  const now = Date.now();
+  let id = '';
+  let t = now;
+  // 10-char timestamp
+  for (let i = 9; i >= 0; i--) {
+    id = ENCODING[t % 32] + id;
+    t = Math.floor(t / 32);
+  }
+  // 16-char random
+  for (let i = 0; i < 16; i++) {
+    id += ENCODING[Math.floor(Math.random() * 32)];
+  }
+  return id;
+}
+
+function getOrCreateVisitorId() {
+  try {
+    let vid = localStorage.getItem('kodu_visitor_id');
+    if (!vid) {
+      vid = generateULID();
+      localStorage.setItem('kodu_visitor_id', vid);
+    }
+    return vid;
+  } catch {
+    return generateULID(); // localStorage blocked (private mode, etc.)
+  }
+}
+
+function getSessionId() {
+  // New session per page load (sessionStorage cleared on tab close)
+  try {
+    let sid = sessionStorage.getItem('kodu_session_id');
+    if (!sid) {
+      sid = generateULID();
+      sessionStorage.setItem('kodu_session_id', sid);
+    }
+    return sid;
+  } catch {
+    return generateULID();
+  }
+}
+
+function getUtmParams() {
+  const p = new URLSearchParams(window.location.search);
+  const params = {};
+  const fields = ['utm_source','utm_medium','utm_campaign','utm_content','utm_term','gclid','fbclid','ttclid'];
+  fields.forEach(k => { if (p.get(k)) params[k.replace('_','').replace('utm','')] = p.get(k); });
+  // Keep proper camelCase for API
+  const out = {};
+  if (p.get('utm_source'))   out.utmSource   = p.get('utm_source');
+  if (p.get('utm_medium'))   out.utmMedium   = p.get('utm_medium');
+  if (p.get('utm_campaign')) out.utmCampaign = p.get('utm_campaign');
+  if (p.get('utm_content'))  out.utmContent  = p.get('utm_content');
+  if (p.get('utm_term'))     out.utmTerm     = p.get('utm_term');
+  if (p.get('gclid'))        out.gclid       = p.get('gclid');
+  if (p.get('fbclid'))       out.fbclid      = p.get('fbclid');
+  if (p.get('ttclid'))       out.ttclid      = p.get('ttclid');
+  return out;
+}
+
+async function initIdentity() {
+  state.visitorId = getOrCreateVisitorId();
+  state.sessionId = getSessionId();
+
+  try {
+    // Fire-and-forget: visitor find-or-create
+    fetch('/api/visitors', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ visitorId: state.visitorId }),
+    }).catch(() => {});
+
+    // Session create (idempotent)
+    const ua = navigator.userAgent || '';
+    const isMobile = /Mobi|Android|iPhone|iPad/.test(ua);
+    const deviceType = isMobile ? 'mobile' : 'desktop';
+
+    fetch('/api/sessions', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        sessionId: state.sessionId,
+        visitorId: state.visitorId,
+        app: 'repair',
+        landingPage: window.location.href,
+        referrerUrl: document.referrer || undefined,
+        referrerDomain: document.referrer ? new URL(document.referrer).hostname : undefined,
+        deviceType,
+        ...getUtmParams(),
+      }),
+    }).catch(() => {});
+
+    // landing_page_viewed event
+    trackEvent('landing_page_viewed', { url: window.location.href });
+  } catch (e) {
+    // Identity errors are non-fatal
+  }
+}
+
+function trackEvent(eventName, properties = {}) {
+  if (!state.visitorId || !state.sessionId) return;
+  fetch('/api/events', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      events: [{
+        visitorId: state.visitorId,
+        sessionId: state.sessionId,
+        app: 'repair',
+        eventName,
+        repairEventId: state.repairEventId || undefined,
+        properties,
+        occurredAt: new Date().toISOString(),
+      }],
+    }),
+  }).catch(() => {}); // fire-and-forget; never block the UI
+}
 
 // ── Utilities ──────────────────────────────────────────────────────────────
 function toast(msg, dur = 3000) {
@@ -673,6 +1055,7 @@ async function loadCategories() {
         el.classList.add('selected');
         state.categoryKey = cat.key;
         state.categoryLabel = cat.label;
+        trackEvent('equipment_selected', { category_key: cat.key, category_label: cat.label });
         updateNextBtn1();
       });
       grid.appendChild(el);
@@ -694,7 +1077,6 @@ document.getElementById('btn-next-1').addEventListener('click', async () => {
     const streetRaw = document.getElementById('street').value.trim();
     let propertyPayload;
     if (streetRaw) {
-      // Simple parse: "123 Main St, Springfield, IL 62701"
       const parts = streetRaw.split(',').map(s => s.trim());
       const last = parts[parts.length - 1]?.trim() ?? '';
       const stateZip = last.split(' ').filter(Boolean);
@@ -705,7 +1087,6 @@ document.getElementById('btn-next-1').addEventListener('click', async () => {
         zip: stateZip[1] || '00000',
       };
     } else {
-      // Anonymous property placeholder
       propertyPayload = { streetLine1: 'Not provided', city: 'Unknown', state: 'XX', zip: '00000' };
     }
 
@@ -725,7 +1106,15 @@ document.getElementById('btn-next-1').addEventListener('click', async () => {
     const equipData = await api('POST', '/api/equipment', equipPayload);
     state.equipmentId = equipData.equipment.id;
 
+    trackEvent('equipment_details_entered', {
+      category_key: state.categoryKey,
+      has_install_year: !!installYearVal,
+      has_age_estimate: !!ageEstVal,
+      has_address: !!streetRaw,
+    });
+
     goTo(2);
+    trackEvent('analysis_started', { category_key: state.categoryKey });
   } catch (e) {
     toast('Something went wrong: ' + e.message);
   } finally {
@@ -782,6 +1171,13 @@ document.getElementById('btn-next-2').addEventListener('click', async () => {
 
     const data = await api('POST', '/api/repair-events', payload);
     state.repairEventId = data.repairEvent.id;
+
+    trackEvent('repair_details_entered', {
+      urgency: state.selectedUrgency,
+      prior_repair_count: priorRepairsVal !== '' ? parseInt(priorRepairsVal, 10) : null,
+      has_extra_context: !!extraContext,
+    });
+
     goTo(3);
   } catch (e) {
     toast('Something went wrong: ' + e.message);
@@ -803,6 +1199,7 @@ document.getElementById('btn-analyse').addEventListener('click', async () => {
         contractorName: document.getElementById('contractor-name').value.trim() || undefined,
         notes: document.getElementById('quote-notes').value.trim() || undefined,
       });
+      trackEvent('quote_entered', { amount: parseFloat(quoteAmount) });
     }
 
     // Run analysis
@@ -811,6 +1208,13 @@ document.getElementById('btn-analyse').addEventListener('click', async () => {
 
     renderResults(data.analysis);
     goTo(4);
+
+    trackEvent('analysis_completed', {
+      analysis_id: state.analysisId,
+      overall_lean: data.analysis.overall_lean,
+      confidence: data.analysis.confidence,
+    });
+    trackEvent('analysis_viewed', { analysis_id: state.analysisId });
   } catch (e) {
     toast('Analysis failed: ' + e.message);
   } finally {
@@ -895,9 +1299,29 @@ function renderResults(analysis) {
         <button class="decision-btn defer" onclick="recordDecision('defer')" style="grid-column:span 2">Not sure yet — save this for later</button>
       </div>
     </div>
+
+    <div class="pdf-cta" id="pdf-cta-block">
+      <div class="pdf-cta-headline">Get your full KODU Repair Report</div>
+      <div class="pdf-cta-sub">
+        A clean, shareable PDF of this analysis — yours to keep, forward to a contractor,
+        or revisit before you decide.
+      </div>
+      <ul class="pdf-cta-bullets">
+        <li>Full analysis with all factors explained</li>
+        <li>Your equipment details and repair context</li>
+        <li>Ready to share with a contractor or family member</li>
+      </ul>
+      <button class="btn-cta-report" onclick="openReportModal()">
+        📄 Get My Full KODU Report
+      </button>
+      <div class="pdf-cta-note">Free · No account required · Delivered to your inbox</div>
+    </div>
   `;
 
   document.getElementById('results-area').innerHTML = html;
+
+  // Track that CTA became visible
+  setTimeout(() => trackEvent('pdf_cta_viewed', { analysis_id: state.analysisId }), 500);
 }
 
 async function recordDecision(choice) {
@@ -919,7 +1343,98 @@ async function recordDecision(choice) {
   }
 }
 
+// ── Report modal ───────────────────────────────────────────────────────────
+function openReportModal() {
+  document.getElementById('report-modal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+  document.getElementById('modal-first-name').focus();
+  trackEvent('contact_form_viewed', { analysis_id: state.analysisId });
+  trackEvent('pdf_requested', { analysis_id: state.analysisId });
+}
+
+function closeReportModal() {
+  if (state.reportSubmitted) return; // Keep open to show success state
+  document.getElementById('report-modal').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+// Close modal on backdrop click
+document.getElementById('report-modal').addEventListener('click', function(e) {
+  if (e.target === this && !state.reportSubmitted) closeReportModal();
+});
+
+// Close modal on Escape
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape' && !state.reportSubmitted) closeReportModal();
+});
+
+// Modal form validation
+function updateSubmitBtn() {
+  const firstName = document.getElementById('modal-first-name').value.trim();
+  const email = document.getElementById('modal-email').value.trim();
+  const isValid = firstName.length > 0 && email.includes('@') && email.includes('.');
+  document.getElementById('btn-submit-report').disabled = !isValid;
+}
+
+document.getElementById('modal-first-name').addEventListener('input', updateSubmitBtn);
+document.getElementById('modal-email').addEventListener('input', updateSubmitBtn);
+
+async function submitReportRequest() {
+  const btn = document.getElementById('btn-submit-report');
+  const firstName = document.getElementById('modal-first-name').value.trim();
+  const email = document.getElementById('modal-email').value.trim();
+  const marketingOptIn = document.getElementById('modal-marketing-opt-in').checked;
+
+  setLoading(btn, true);
+
+  try {
+    const result = await api('POST', '/api/reports', {
+      firstName,
+      email,
+      marketingOptIn,
+      visitorId: state.visitorId,
+      sessionId: state.sessionId,
+      analysisId: state.analysisId,
+      consentVersion: '1.0',
+    });
+
+    state.reportSubmitted = true;
+
+    // Track opt-in separately if chosen
+    if (marketingOptIn) {
+      trackEvent('marketing_opt_in', { source: 'pdf_request_form' });
+    }
+    trackEvent('contact_submitted', {
+      analysis_id: state.analysisId,
+      marketing_opt_in: marketingOptIn,
+    });
+
+    // Show success state
+    document.getElementById('modal-form-state').style.display = 'none';
+    document.getElementById('modal-success-state').style.display = 'block';
+    document.getElementById('modal-success-email').textContent = email;
+    document.querySelector('.modal-close').style.display = 'none';
+
+    // Replace CTA block with confirmation
+    const ctaBlock = document.getElementById('pdf-cta-block');
+    if (ctaBlock) {
+      ctaBlock.innerHTML = `
+        <div style="text-align:center;padding:8px 0">
+          <div style="font-size:24px;margin-bottom:8px">📬</div>
+          <div style="font-size:16px;font-weight:700;color:#fff;margin-bottom:4px">Report sent!</div>
+          <div style="font-size:13px;color:rgba(255,255,255,0.65)">Check your inbox at <strong>${email}</strong></div>
+        </div>
+      `;
+    }
+
+  } catch(e) {
+    toast('Could not send report: ' + e.message);
+    setLoading(btn, false);
+  }
+}
+
 // ── Init ───────────────────────────────────────────────────────────────────
+initIdentity();
 loadCategories();
 </script>
 </body>

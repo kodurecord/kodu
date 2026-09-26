@@ -12,6 +12,10 @@
  *   /api/repair-events/:id/analyse POST — run deterministic analysis
  *   /api/repair-events/:id/analysis GET  — get latest analysis with factors
  *   /api/repair-events/:id/decide  POST — record homeowner decision
+ *   /api/visitors              POST — find or create anonymous visitor
+ *   /api/sessions              POST — start a session for a visitor
+ *   /api/events                POST — ingest a batch of funnel events
+ *   /api/reports               POST — request PDF report (contact capture + email)
  *   /health                    GET  — liveness check
  *
  * Static files in public/ are served via env.ASSETS (run_worker_first: true).
@@ -25,12 +29,19 @@ import { handleRepairEvents, handleRepairEventById } from "./api/repair-events";
 import { handleQuotes } from "./api/quotes";
 import { handleAnalyse, handleAnalysis } from "./api/analysis";
 import { handleDecide } from "./api/decisions";
+import { handleVisitors, handleSessions, handleEvents } from "./api/visitors";
+import { handleReportRequest } from "./api/reports";
 
 export interface Env {
   DB: D1Database;
   ASSETS: Fetcher; // Cloudflare Static Assets binding (auto-provided)
   ENVIRONMENT: string;
   APP_VERSION: string;
+  // Email (Mailgun) — set via `wrangler secret put`
+  MAILGUN_API_KEY: string;
+  MAILGUN_DOMAIN: string;
+  MAILGUN_FROM_NAME?: string;
+  MAILGUN_FROM_EMAIL?: string;
 }
 
 export default {
@@ -113,6 +124,22 @@ export default {
       else if (path.match(/^\/api\/repair-events\/[^/]+\/decide$/) && method === "POST") {
         const repairEventId = path.split("/")[3]!;
         response = await handleDecide(request, db, repairEventId);
+      }
+
+      // Visitor / session / event instrumentation
+      else if (path === "/api/visitors" && method === "POST") {
+        response = await handleVisitors(request, db);
+      }
+      else if (path === "/api/sessions" && method === "POST") {
+        response = await handleSessions(request, db);
+      }
+      else if (path === "/api/events" && method === "POST") {
+        response = await handleEvents(request, db);
+      }
+
+      // PDF report request (contact capture + Mailgun delivery)
+      else if (path === "/api/reports" && method === "POST") {
+        response = await handleReportRequest(request, db, env);
       }
 
       if (response) {
