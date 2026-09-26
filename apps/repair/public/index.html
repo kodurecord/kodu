@@ -76,12 +76,22 @@
       gap: 10px;
     }
     .logo {
-      font-weight: 700;
-      font-size: 17px;
-      color: #fff;
-      letter-spacing: -0.3px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
     }
-    .logo span { color: var(--k-brand-2); }
+    .logo img {
+      height: 32px;
+      width: auto;
+      display: block;
+    }
+    .logo-sub {
+      font-size: 13px;
+      font-weight: 500;
+      color: rgba(255,255,255,0.7);
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+    }
     .badge {
       background: var(--k-brand);
       color: #fff;
@@ -403,7 +413,10 @@
 <body>
 <div class="app">
   <header>
-    <span class="logo">KODU <span>Repair</span></span>
+    <span class="logo">
+      <img src="/kodu-logo.png" alt="KODU" />
+      <span class="logo-sub">Repair</span>
+    </span>
     <span class="badge">Beta</span>
   </header>
 
