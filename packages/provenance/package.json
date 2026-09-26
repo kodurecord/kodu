@@ -1,0 +1,14 @@
+{
+  "name": "@kodu/provenance",
+  "version": "0.1.0",
+  "private": true,
+  "description": "KODU provenance factory helpers — create typed provenance sources",
+  "main": "./src/index.ts",
+  "dependencies": {
+    "@kodu/database": "workspace:*",
+    "@kodu/entity-schema": "workspace:*"
+  },
+  "devDependencies": {
+    "typescript": "^5.5.0"
+  }
+}

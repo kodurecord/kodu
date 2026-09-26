@@ -1,0 +1,156 @@
+/*
+ * KODU Design System — CSS Custom Properties
+ * Shared across all KODU applications.
+ * Source of truth for color, typography, spacing, radius, shadow.
+ *
+ * Derived from the established KODU Record visual language.
+ * Do not override these in application CSS — extend via component-level variables.
+ */
+
+:root {
+  /* -----------------------------------------------
+     Color — Surfaces
+  ----------------------------------------------- */
+  --k-bg:           #f1f3f7;   /* page background */
+  --k-bg-2:         #e9ecf2;   /* secondary surface */
+  --k-surface:      #ffffff;   /* card / elevated surface */
+  --k-surface-raised: #ffffff; /* modal / overlay surface */
+
+  /* -----------------------------------------------
+     Color — Text
+  ----------------------------------------------- */
+  --k-ink:          #1a2333;   /* primary text */
+  --k-ink-2:        #2c3548;   /* secondary strong text */
+  --k-slate:        #5a6478;   /* secondary / supporting text */
+  --k-slate-2:      #8a93a4;   /* tertiary / muted text */
+  --k-slate-3:      #b4bbc8;   /* placeholder text */
+  --k-slate-4:      #d4d9e2;   /* disabled text */
+
+  /* -----------------------------------------------
+     Color — Rules & Borders
+  ----------------------------------------------- */
+  --k-rule:         #dde1e8;
+  --k-rule-soft:    #e7eaf0;
+  --k-rule-strong:  #c8cdd6;
+
+  /* -----------------------------------------------
+     Color — Brand (KODU Green/Teal)
+  ----------------------------------------------- */
+  --k-brand:        #1d7a6b;   /* KODU primary green-teal */
+  --k-brand-2:      #25907e;   /* brand hover */
+  --k-brand-soft:   #e4f3f1;   /* brand tint background */
+  --k-brand-tint:   #f2faf9;   /* brand ultra-light tint */
+  --k-brand-text:   #155a4e;   /* brand text on light bg */
+
+  /* -----------------------------------------------
+     Color — Navy (headers, dark sections)
+  ----------------------------------------------- */
+  --k-navy:         #0f1c2e;
+  --k-navy-2:       #1a2d45;
+  --k-navy-text:    #e2e8f2;   /* text on navy bg */
+
+  /* -----------------------------------------------
+     Color — Status
+  ----------------------------------------------- */
+  --k-ok:           #6fa56d;
+  --k-ok-soft:      #e8f1e6;
+  --k-ok-2:         #5a8e58;
+
+  --k-warn:         #d49434;
+  --k-warn-soft:    #fbf3e3;
+  --k-warn-2:       #a87320;
+
+  --k-risk:         #c94b4b;
+  --k-risk-soft:    #faeaea;
+  --k-risk-2:       #a33838;
+
+  --k-info:         #3d7ab5;
+  --k-info-soft:    #e6f0f9;
+
+  /* -----------------------------------------------
+     Color — Repair vs Replace (analysis results)
+  ----------------------------------------------- */
+  --k-repair:       #1d7a6b;   /* = brand; repair leans green */
+  --k-repair-soft:  #e4f3f1;
+  --k-replace:      #3d6fa8;   /* navy-adjacent blue; replace is a bigger decision */
+  --k-replace-soft: #e6eef7;
+  --k-neutral:      #8a93a4;   /* inconclusive */
+  --k-neutral-soft: #f1f3f7;
+
+  /* -----------------------------------------------
+     Typography
+  ----------------------------------------------- */
+  --k-font-sans:    'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --k-font-mono:    'JetBrains Mono', 'Fira Code', ui-monospace, monospace;
+
+  --k-text-xs:      11px;
+  --k-text-sm:      13px;
+  --k-text-base:    15px;
+  --k-text-md:      17px;
+  --k-text-lg:      20px;
+  --k-text-xl:      24px;
+  --k-text-2xl:     30px;
+  --k-text-3xl:     38px;
+  --k-text-4xl:     48px;
+
+  --k-leading-tight:  1.25;
+  --k-leading-snug:   1.4;
+  --k-leading-normal: 1.55;
+  --k-leading-loose:  1.75;
+
+  --k-weight-regular: 400;
+  --k-weight-medium:  500;
+  --k-weight-semi:    600;
+  --k-weight-bold:    700;
+
+  /* -----------------------------------------------
+     Spacing (4px base unit)
+  ----------------------------------------------- */
+  --k-space-1:   4px;
+  --k-space-2:   8px;
+  --k-space-3:   12px;
+  --k-space-4:   16px;
+  --k-space-5:   20px;
+  --k-space-6:   24px;
+  --k-space-8:   32px;
+  --k-space-10:  40px;
+  --k-space-12:  48px;
+  --k-space-16:  64px;
+  --k-space-20:  80px;
+  --k-space-24:  96px;
+
+  /* -----------------------------------------------
+     Border Radius
+  ----------------------------------------------- */
+  --k-radius-sm:   6px;
+  --k-radius-md:   10px;
+  --k-radius-lg:   14px;
+  --k-radius-xl:   18px;
+  --k-radius-2xl:  24px;
+  --k-radius-pill: 9999px;
+
+  /* -----------------------------------------------
+     Shadows
+  ----------------------------------------------- */
+  --k-shadow-xs:  0 1px 2px rgba(10, 20, 40, 0.05);
+  --k-shadow-sm:  0 1px 4px rgba(10, 20, 40, 0.07), 0 1px 2px rgba(10, 20, 40, 0.04);
+  --k-shadow-md:  0 4px 12px rgba(10, 20, 40, 0.08), 0 1px 4px rgba(10, 20, 40, 0.04);
+  --k-shadow-lg:  0 8px 24px rgba(10, 20, 40, 0.10), 0 2px 8px rgba(10, 20, 40, 0.05);
+  --k-shadow-xl:  0 16px 40px rgba(10, 20, 40, 0.12), 0 4px 12px rgba(10, 20, 40, 0.06);
+
+  /* -----------------------------------------------
+     Layout
+  ----------------------------------------------- */
+  --k-content-width:  720px;
+  --k-content-wide:   960px;
+  --k-gutter:         16px;
+
+  /* -----------------------------------------------
+     Motion
+  ----------------------------------------------- */
+  --k-ease-out:   cubic-bezier(0.16, 1, 0.3, 1);
+  --k-ease-in:    cubic-bezier(0.7, 0, 0.84, 0);
+  --k-duration-fast:   120ms;
+  --k-duration-base:   200ms;
+  --k-duration-slow:   320ms;
+}

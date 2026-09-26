@@ -1,0 +1,913 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KODU Repair — Should You Repair or Replace?</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    /* ── KODU Design Tokens ───────────────────────────────────────── */
+    :root {
+      --k-bg:           #f1f3f7;
+      --k-bg-2:         #e9ecf2;
+      --k-surface:      #ffffff;
+      --k-ink:          #1a2333;
+      --k-ink-2:        #2c3548;
+      --k-slate:        #5a6478;
+      --k-slate-2:      #8a93a4;
+      --k-slate-3:      #b4bbc8;
+      --k-slate-4:      #d4d9e2;
+      --k-rule:         #dde1e8;
+      --k-brand:        #1d7a6b;
+      --k-brand-2:      #25907e;
+      --k-brand-soft:   #e4f3f1;
+      --k-brand-tint:   #f2faf9;
+      --k-brand-text:   #155a4e;
+      --k-navy:         #0f1c2e;
+      --k-navy-2:       #1a2d45;
+      --k-navy-text:    #e2e8f2;
+      --k-ok:           #6fa56d;
+      --k-ok-soft:      #e8f1e6;
+      --k-warn:         #d49434;
+      --k-warn-soft:    #fbf3e3;
+      --k-risk:         #c94b4b;
+      --k-risk-soft:    #faeaea;
+      --k-repair:       #1d7a6b;
+      --k-repair-soft:  #e4f3f1;
+      --k-replace:      #3d6fa8;
+      --k-replace-soft: #e6eef7;
+      --k-neutral:      #8a93a4;
+      --k-neutral-soft: #f1f3f7;
+      --k-shadow-sm:    0 1px 4px rgba(10,20,40,.07), 0 1px 2px rgba(10,20,40,.04);
+      --k-shadow-md:    0 4px 12px rgba(10,20,40,.08), 0 1px 4px rgba(10,20,40,.04);
+      --k-shadow-lg:    0 8px 24px rgba(10,20,40,.10), 0 2px 8px rgba(10,20,40,.05);
+      --k-radius-sm:    6px;
+      --k-radius-md:    10px;
+      --k-radius-lg:    14px;
+      --k-radius-xl:    18px;
+      --k-radius-pill:  9999px;
+      --k-font:         'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    /* ── Reset & Base ─────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 15px; }
+    body {
+      font-family: var(--k-font);
+      background: var(--k-bg);
+      color: var(--k-ink);
+      line-height: 1.55;
+      min-height: 100vh;
+    }
+    a { color: var(--k-brand); text-decoration: none; }
+    button { font-family: inherit; cursor: pointer; border: none; }
+    input, select, textarea { font-family: inherit; font-size: inherit; }
+
+    /* ── Layout ───────────────────────────────────────────────────── */
+    .app { display: flex; flex-direction: column; min-height: 100vh; }
+
+    header {
+      background: var(--k-navy);
+      padding: 0 16px;
+      height: 56px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .logo {
+      font-weight: 700;
+      font-size: 17px;
+      color: #fff;
+      letter-spacing: -0.3px;
+    }
+    .logo span { color: var(--k-brand-2); }
+    .badge {
+      background: var(--k-brand);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: var(--k-radius-pill);
+    }
+
+    main {
+      flex: 1;
+      padding: 32px 16px 64px;
+      max-width: 680px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    /* ── Step progress ────────────────────────────────────────────── */
+    .steps {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 32px;
+    }
+    .step-pip {
+      height: 4px;
+      flex: 1;
+      border-radius: 2px;
+      background: var(--k-rule);
+      transition: background 0.2s;
+    }
+    .step-pip.done { background: var(--k-brand); }
+    .step-pip.active { background: var(--k-brand-2); }
+
+    /* ── Cards ────────────────────────────────────────────────────── */
+    .card {
+      background: var(--k-surface);
+      border-radius: var(--k-radius-xl);
+      box-shadow: var(--k-shadow-md);
+      padding: 28px 24px;
+      margin-bottom: 16px;
+    }
+    .card-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--k-ink);
+      margin-bottom: 6px;
+      letter-spacing: -0.3px;
+    }
+    .card-sub {
+      font-size: 14px;
+      color: var(--k-slate);
+      margin-bottom: 24px;
+    }
+
+    /* ── Form elements ────────────────────────────────────────────── */
+    .field { margin-bottom: 18px; }
+    .field label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--k-ink-2);
+      margin-bottom: 6px;
+    }
+    .field .hint {
+      font-size: 12px;
+      color: var(--k-slate-2);
+      margin-top: 4px;
+    }
+    input[type="text"],
+    input[type="number"],
+    select,
+    textarea {
+      display: block;
+      width: 100%;
+      padding: 10px 14px;
+      border: 1.5px solid var(--k-rule);
+      border-radius: var(--k-radius-md);
+      background: var(--k-bg);
+      color: var(--k-ink);
+      font-size: 15px;
+      transition: border-color 0.15s, box-shadow 0.15s;
+      outline: none;
+    }
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--k-brand);
+      box-shadow: 0 0 0 3px var(--k-brand-soft);
+    }
+    textarea { resize: vertical; min-height: 80px; }
+
+    .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+    /* Category grid */
+    .cat-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+    .cat-card {
+      background: var(--k-bg);
+      border: 2px solid var(--k-rule);
+      border-radius: var(--k-radius-lg);
+      padding: 14px 12px;
+      cursor: pointer;
+      text-align: center;
+      transition: border-color 0.15s, background 0.15s;
+    }
+    .cat-card:hover { border-color: var(--k-brand-2); background: var(--k-brand-tint); }
+    .cat-card.selected { border-color: var(--k-brand); background: var(--k-brand-soft); }
+    .cat-card .cat-icon { font-size: 26px; margin-bottom: 6px; }
+    .cat-card .cat-name { font-size: 12px; font-weight: 600; color: var(--k-ink-2); }
+
+    /* Urgency selector */
+    .urgency-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+    .urgency-opt {
+      border: 2px solid var(--k-rule);
+      border-radius: var(--k-radius-lg);
+      padding: 14px;
+      cursor: pointer;
+      transition: border-color 0.15s, background 0.15s;
+    }
+    .urgency-opt:hover { border-color: var(--k-brand); }
+    .urgency-opt.selected { border-color: var(--k-brand); background: var(--k-brand-soft); }
+    .urgency-opt .u-label { font-size: 14px; font-weight: 600; color: var(--k-ink); }
+    .urgency-opt .u-desc  { font-size: 12px; color: var(--k-slate); margin-top: 3px; }
+
+    /* ── Buttons ──────────────────────────────────────────────────── */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 12px 24px;
+      border-radius: var(--k-radius-pill);
+      font-size: 15px;
+      font-weight: 600;
+      transition: background 0.15s, transform 0.1s;
+    }
+    .btn:active { transform: scale(0.98); }
+    .btn-primary {
+      background: var(--k-brand);
+      color: #fff;
+      width: 100%;
+    }
+    .btn-primary:hover { background: var(--k-brand-2); }
+    .btn-primary:disabled { background: var(--k-slate-3); cursor: not-allowed; }
+    .btn-ghost {
+      background: transparent;
+      color: var(--k-slate);
+      font-size: 14px;
+    }
+    .btn-ghost:hover { color: var(--k-ink); }
+
+    /* ── Analysis results ─────────────────────────────────────────── */
+    .verdict-banner {
+      border-radius: var(--k-radius-xl);
+      padding: 28px 24px;
+      margin-bottom: 16px;
+      text-align: center;
+    }
+    .verdict-banner.repair   { background: var(--k-repair-soft); }
+    .verdict-banner.replace  { background: var(--k-replace-soft); }
+    .verdict-banner.inconclusive { background: var(--k-neutral-soft); }
+
+    .verdict-label {
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+    .verdict-banner.repair   .verdict-label { color: var(--k-brand-text); }
+    .verdict-banner.replace  .verdict-label { color: #2a4f7a; }
+    .verdict-banner.inconclusive .verdict-label { color: var(--k-neutral); }
+
+    .verdict-headline {
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      margin-bottom: 8px;
+    }
+    .verdict-banner.repair   .verdict-headline { color: var(--k-repair); }
+    .verdict-banner.replace  .verdict-headline { color: var(--k-replace); }
+    .verdict-banner.inconclusive .verdict-headline { color: var(--k-ink); }
+
+    .verdict-sub { font-size: 14px; color: var(--k-slate); }
+
+    /* Confidence badge */
+    .confidence-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 4px 12px;
+      border-radius: var(--k-radius-pill);
+      font-size: 12px;
+      font-weight: 600;
+      margin-top: 12px;
+    }
+    .confidence-high   { background: var(--k-ok-soft); color: #3a6b39; }
+    .confidence-medium { background: var(--k-warn-soft); color: #7a5a10; }
+    .confidence-low    { background: var(--k-neutral-soft); color: var(--k-slate); }
+
+    /* Factor cards */
+    .factors { display: flex; flex-direction: column; gap: 12px; margin-bottom: 16px; }
+    .factor-card {
+      background: var(--k-surface);
+      border-radius: var(--k-radius-lg);
+      box-shadow: var(--k-shadow-sm);
+      padding: 18px 20px;
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+    }
+    .factor-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: var(--k-radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+    .factor-icon.repair      { background: var(--k-repair-soft); }
+    .factor-icon.replace     { background: var(--k-replace-soft); }
+    .factor-icon.neutral     { background: var(--k-neutral-soft); }
+    .factor-icon.unknown     { background: var(--k-neutral-soft); }
+    .factor-body { flex: 1; min-width: 0; }
+    .factor-direction {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+    .factor-direction.repair  { color: var(--k-brand-text); }
+    .factor-direction.replace { color: #2a4f7a; }
+    .factor-direction.neutral, .factor-direction.unknown { color: var(--k-slate-2); }
+    .factor-explanation { font-size: 14px; color: var(--k-ink-2); line-height: 1.5; }
+    .factor-data-note { font-size: 12px; color: var(--k-slate-2); margin-top: 5px; }
+
+    /* Decision bar */
+    .decision-bar {
+      background: var(--k-surface);
+      border-radius: var(--k-radius-xl);
+      box-shadow: var(--k-shadow-md);
+      padding: 20px 24px;
+      margin-bottom: 16px;
+    }
+    .decision-bar h3 { font-size: 16px; font-weight: 700; margin-bottom: 14px; }
+    .decision-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .decision-btn {
+      padding: 14px;
+      border-radius: var(--k-radius-lg);
+      font-size: 14px;
+      font-weight: 600;
+      border: 2px solid transparent;
+      transition: all 0.15s;
+    }
+    .decision-btn.repair   { background: var(--k-repair-soft); color: var(--k-brand-text); border-color: var(--k-brand); }
+    .decision-btn.replace  { background: var(--k-replace-soft); color: #1e3e6a; border-color: var(--k-replace); }
+    .decision-btn.defer    { background: var(--k-bg); color: var(--k-slate); border-color: var(--k-rule); }
+    .decision-btn:hover { filter: brightness(0.95); }
+
+    /* Data quality warning */
+    .dq-warning {
+      background: var(--k-warn-soft);
+      border: 1px solid #f0d08a;
+      border-radius: var(--k-radius-lg);
+      padding: 14px 16px;
+      font-size: 13px;
+      color: #6b4d10;
+      margin-bottom: 16px;
+    }
+
+    /* Disclaimer */
+    .disclaimer {
+      font-size: 12px;
+      color: var(--k-slate-2);
+      text-align: center;
+      line-height: 1.6;
+      padding: 0 8px;
+    }
+
+    /* Loading spinner */
+    .spinner {
+      display: inline-block;
+      width: 18px; height: 18px;
+      border: 2.5px solid rgba(255,255,255,0.3);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Screen transitions */
+    .screen { display: none; }
+    .screen.active { display: block; }
+
+    /* Toast */
+    #toast {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%) translateY(80px);
+      background: var(--k-ink);
+      color: #fff;
+      font-size: 14px;
+      padding: 10px 20px;
+      border-radius: var(--k-radius-pill);
+      box-shadow: var(--k-shadow-lg);
+      transition: transform 0.25s;
+      z-index: 100;
+      white-space: nowrap;
+    }
+    #toast.show { transform: translateX(-50%) translateY(0); }
+  </style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <span class="logo">KODU <span>Repair</span></span>
+    <span class="badge">Beta</span>
+  </header>
+
+  <main>
+    <!-- Step progress -->
+    <div class="steps">
+      <div class="step-pip active" id="pip-1"></div>
+      <div class="step-pip" id="pip-2"></div>
+      <div class="step-pip" id="pip-3"></div>
+      <div class="step-pip" id="pip-4"></div>
+    </div>
+
+    <!-- ── Screen 1: Property + Equipment Intake ──────────────────── -->
+    <div class="screen active" id="screen-1">
+      <div class="card">
+        <div class="card-title">What needs attention?</div>
+        <div class="card-sub">Tell us about the piece of equipment you're trying to decide on.</div>
+
+        <div class="field">
+          <label>Equipment type</label>
+          <div class="cat-grid" id="cat-grid">
+            <div style="color:var(--k-slate-2);font-size:13px;">Loading categories…</div>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Property address <span style="font-weight:400;color:var(--k-slate-2)">(optional but helps track history)</span></label>
+          <input type="text" id="street" placeholder="123 Main St, Springfield, IL 62701">
+          <div class="hint">City and state are the minimum needed. We never sell your address.</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">How old is it?</div>
+        <div class="card-sub">Even a rough estimate significantly improves the analysis.</div>
+
+        <div class="row-2">
+          <div class="field">
+            <label>Install year (if known)</label>
+            <input type="number" id="install-year" placeholder="e.g. 2012" min="1960" max="2026">
+          </div>
+          <div class="field">
+            <label>Or estimated age</label>
+            <select id="age-est">
+              <option value="">Unknown</option>
+              <option value="2">About 2 years</option>
+              <option value="5">About 5 years</option>
+              <option value="8">About 8 years</option>
+              <option value="10">About 10 years</option>
+              <option value="12">About 12 years</option>
+              <option value="15">About 15 years</option>
+              <option value="20">About 20 years</option>
+              <option value="25">25+ years</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <button class="btn btn-primary" id="btn-next-1" disabled>
+        Continue →
+      </button>
+    </div>
+
+    <!-- ── Screen 2: Repair Context ───────────────────────────────── -->
+    <div class="screen" id="screen-2">
+      <div class="card">
+        <div class="card-title">What's going on?</div>
+        <div class="card-sub">Describe the problem. Be as specific as you can.</div>
+
+        <div class="field">
+          <textarea id="problem-desc" placeholder="e.g. The AC unit is making a loud grinding noise and stopped cooling. A technician diagnosed a failed compressor." rows="4"></textarea>
+        </div>
+
+        <div class="field">
+          <label>How urgent is this?</label>
+          <div class="urgency-grid">
+            <div class="urgency-opt" data-urgency="immediate">
+              <div class="u-label">🚨 Right now</div>
+              <div class="u-desc">Safety issue or completely non-functional</div>
+            </div>
+            <div class="urgency-opt" data-urgency="soon">
+              <div class="u-label">⚡ Within a week</div>
+              <div class="u-desc">Causing real discomfort or risk</div>
+            </div>
+            <div class="urgency-opt" data-urgency="can_wait">
+              <div class="u-label">🕐 Can wait</div>
+              <div class="u-desc">Working poorly but not an emergency</div>
+            </div>
+            <div class="urgency-opt" data-urgency="unknown">
+              <div class="u-label">🤔 Not sure</div>
+              <div class="u-desc">Still figuring out the situation</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Has this been repaired before?</label>
+          <select id="prior-repairs">
+            <option value="">Not sure</option>
+            <option value="0">No, this is the first issue</option>
+            <option value="1">Once before</option>
+            <option value="2">Twice before</option>
+            <option value="3">3 or more times</option>
+          </select>
+        </div>
+
+        <div class="field" id="prior-spend-field" style="display:none">
+          <label>Roughly how much was spent on prior repairs? <span style="font-weight:400;color:var(--k-slate-2)">(optional)</span></label>
+          <input type="number" id="prior-spend" placeholder="e.g. 650" min="0">
+          <div class="hint">Approximate is fine. This affects the repair history factor.</div>
+        </div>
+
+        <div class="field">
+          <label>Anything else we should know? <span style="font-weight:400;color:var(--k-slate-2)">(optional)</span></label>
+          <textarea id="extra-context" placeholder="e.g. Planning to sell in 2 years. Worried about the cost of a full replacement right now." rows="2"></textarea>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:10px">
+        <button class="btn btn-ghost" onclick="goTo(1)">← Back</button>
+        <button class="btn btn-primary" id="btn-next-2" style="flex:1" disabled>
+          Continue →
+        </button>
+      </div>
+    </div>
+
+    <!-- ── Screen 3: Quote(s) ─────────────────────────────────────── -->
+    <div class="screen" id="screen-3">
+      <div class="card">
+        <div class="card-title">Do you have a repair quote?</div>
+        <div class="card-sub">A quote makes the cost-ratio factor much more accurate. Skip if you don't have one yet.</div>
+
+        <div class="field">
+          <label>Repair quote total <span style="font-weight:400;color:var(--k-slate-2)">(USD, optional)</span></label>
+          <input type="number" id="quote-amount" placeholder="e.g. 850" min="0">
+        </div>
+        <div class="field">
+          <label>Contractor name <span style="font-weight:400;color:var(--k-slate-2)">(optional)</span></label>
+          <input type="text" id="contractor-name" placeholder="e.g. ABC Heating & Cooling">
+        </div>
+        <div class="field">
+          <label>What does the quote cover? <span style="font-weight:400;color:var(--k-slate-2)">(optional)</span></label>
+          <textarea id="quote-notes" placeholder="e.g. Compressor replacement, labor, and 1-year parts warranty." rows="2"></textarea>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:10px">
+        <button class="btn btn-ghost" onclick="goTo(2)">← Back</button>
+        <button class="btn btn-primary" id="btn-analyse" style="flex:1">
+          Analyse →
+        </button>
+      </div>
+    </div>
+
+    <!-- ── Screen 4: Results ──────────────────────────────────────── -->
+    <div class="screen" id="screen-4">
+      <div id="results-area">
+        <!-- Populated by JS -->
+      </div>
+      <div class="disclaimer">
+        This analysis is based on national reference data (NAHB/HUD) and the information you provided.
+        It is guidance only — not a professional inspection or contractor opinion.
+        Costs vary significantly by region, brand, and installer.
+        <br><br>
+        Replacement cost ranges are national medians and are <strong>not quotes</strong>.
+      </div>
+    </div>
+  </main>
+</div>
+
+<div id="toast"></div>
+
+<script>
+// ── State ──────────────────────────────────────────────────────────────────
+const state = {
+  currentScreen: 1,
+  categoryKey: null,
+  categoryLabel: null,
+  propertyId: null,
+  equipmentId: null,
+  repairEventId: null,
+  selectedUrgency: null,
+  analysisId: null,
+};
+
+// ── Utilities ──────────────────────────────────────────────────────────────
+function toast(msg, dur = 3000) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), dur);
+}
+
+async function api(method, path, body) {
+  const res = await fetch(path, {
+    method,
+    headers: body ? { 'Content-Type': 'application/json' } : {},
+    body: body ? JSON.stringify(body) : undefined,
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({ error: 'Unknown error' }));
+    throw new Error(err.error || `HTTP ${res.status}`);
+  }
+  return res.json();
+}
+
+function setLoading(btn, loading) {
+  if (loading) {
+    btn.dataset.origText = btn.innerHTML;
+    btn.innerHTML = '<span class="spinner"></span>';
+    btn.disabled = true;
+  } else {
+    btn.innerHTML = btn.dataset.origText || 'Continue';
+    btn.disabled = false;
+  }
+}
+
+// ── Navigation ─────────────────────────────────────────────────────────────
+function goTo(n) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(`screen-${n}`).classList.add('active');
+  state.currentScreen = n;
+  window.scrollTo(0, 0);
+
+  // Update progress pips
+  for (let i = 1; i <= 4; i++) {
+    const pip = document.getElementById(`pip-${i}`);
+    pip.className = 'step-pip ' + (i < n ? 'done' : i === n ? 'active' : '');
+  }
+}
+
+// ── Screen 1: Categories ───────────────────────────────────────────────────
+const CATEGORY_ICONS = {
+  hvac: '❄️', plumbing: '🚿', electrical: '⚡', appliances: '🏠',
+  structure: '🏗️', other: '🔧',
+};
+
+async function loadCategories() {
+  const grid = document.getElementById('cat-grid');
+  try {
+    const data = await api('GET', '/api/equipment-categories');
+    const cats = data.categories;
+
+    grid.innerHTML = '';
+    cats.forEach(cat => {
+      const icon = CATEGORY_ICONS[cat.group_name] || '🔧';
+      const el = document.createElement('div');
+      el.className = 'cat-card';
+      el.dataset.key = cat.key;
+      el.dataset.label = cat.label;
+      el.innerHTML = `<div class="cat-icon">${icon}</div><div class="cat-name">${cat.label}</div>`;
+      el.addEventListener('click', () => {
+        document.querySelectorAll('.cat-card').forEach(c => c.classList.remove('selected'));
+        el.classList.add('selected');
+        state.categoryKey = cat.key;
+        state.categoryLabel = cat.label;
+        updateNextBtn1();
+      });
+      grid.appendChild(el);
+    });
+  } catch (e) {
+    grid.innerHTML = '<div style="color:var(--k-risk);font-size:13px;">Could not load categories. Please refresh.</div>';
+  }
+}
+
+function updateNextBtn1() {
+  document.getElementById('btn-next-1').disabled = !state.categoryKey;
+}
+
+document.getElementById('btn-next-1').addEventListener('click', async () => {
+  const btn = document.getElementById('btn-next-1');
+  setLoading(btn, true);
+  try {
+    // Parse address
+    const streetRaw = document.getElementById('street').value.trim();
+    let propertyPayload;
+    if (streetRaw) {
+      // Simple parse: "123 Main St, Springfield, IL 62701"
+      const parts = streetRaw.split(',').map(s => s.trim());
+      const last = parts[parts.length - 1]?.trim() ?? '';
+      const stateZip = last.split(' ').filter(Boolean);
+      propertyPayload = {
+        streetLine1: parts[0] || streetRaw,
+        city: parts[1] || 'Unknown',
+        state: stateZip[0] || 'XX',
+        zip: stateZip[1] || '00000',
+      };
+    } else {
+      // Anonymous property placeholder
+      propertyPayload = { streetLine1: 'Not provided', city: 'Unknown', state: 'XX', zip: '00000' };
+    }
+
+    const propData = await api('POST', '/api/properties', propertyPayload);
+    state.propertyId = propData.property.id;
+
+    // Create equipment with optional facts
+    const installYearVal = document.getElementById('install-year').value;
+    const ageEstVal = document.getElementById('age-est').value;
+    const equipPayload = {
+      propertyId: state.propertyId,
+      categoryKey: state.categoryKey,
+    };
+    if (installYearVal) equipPayload.installYear = parseInt(installYearVal, 10);
+    else if (ageEstVal) equipPayload.ageYearsEstimated = parseFloat(ageEstVal);
+
+    const equipData = await api('POST', '/api/equipment', equipPayload);
+    state.equipmentId = equipData.equipment.id;
+
+    goTo(2);
+  } catch (e) {
+    toast('Something went wrong: ' + e.message);
+  } finally {
+    setLoading(btn, false);
+  }
+});
+
+// ── Screen 2: Repair context ───────────────────────────────────────────────
+document.querySelectorAll('.urgency-opt').forEach(opt => {
+  opt.addEventListener('click', () => {
+    document.querySelectorAll('.urgency-opt').forEach(o => o.classList.remove('selected'));
+    opt.classList.add('selected');
+    state.selectedUrgency = opt.dataset.urgency;
+    updateNextBtn2();
+  });
+});
+
+document.getElementById('problem-desc').addEventListener('input', updateNextBtn2);
+
+document.getElementById('prior-repairs').addEventListener('change', function () {
+  const val = this.value;
+  const spendField = document.getElementById('prior-spend-field');
+  spendField.style.display = (val && val !== '0') ? 'block' : 'none';
+});
+
+function updateNextBtn2() {
+  const desc = document.getElementById('problem-desc').value.trim();
+  document.getElementById('btn-next-2').disabled = !desc || !state.selectedUrgency;
+}
+
+document.getElementById('btn-next-2').addEventListener('click', async () => {
+  const btn = document.getElementById('btn-next-2');
+  setLoading(btn, true);
+  try {
+    const desc = document.getElementById('problem-desc').value.trim();
+    const priorRepairsVal = document.getElementById('prior-repairs').value;
+    const priorSpendVal = document.getElementById('prior-spend').value;
+    const extraContext = document.getElementById('extra-context').value.trim();
+
+    const payload = {
+      equipmentId: state.equipmentId,
+      propertyId: state.propertyId,
+      descriptionOfProblem: desc,
+      urgency: state.selectedUrgency || 'unknown',
+      homeownerContext: extraContext || undefined,
+    };
+
+    if (priorRepairsVal !== '') {
+      const count = parseInt(priorRepairsVal, 10);
+      payload.priorRepairCount = count;
+      payload.isFirstRepair = count === 0;
+      if (priorSpendVal) payload.priorRepairSpendApprox = parseFloat(priorSpendVal);
+    }
+
+    const data = await api('POST', '/api/repair-events', payload);
+    state.repairEventId = data.repairEvent.id;
+    goTo(3);
+  } catch (e) {
+    toast('Something went wrong: ' + e.message);
+  } finally {
+    setLoading(btn, false);
+  }
+});
+
+// ── Screen 3: Quote + analyse ──────────────────────────────────────────────
+document.getElementById('btn-analyse').addEventListener('click', async () => {
+  const btn = document.getElementById('btn-analyse');
+  setLoading(btn, true);
+  try {
+    // Optionally save quote
+    const quoteAmount = document.getElementById('quote-amount').value;
+    if (quoteAmount) {
+      await api('POST', `/api/repair-events/${state.repairEventId}/quotes`, {
+        totalAmount: parseFloat(quoteAmount),
+        contractorName: document.getElementById('contractor-name').value.trim() || undefined,
+        notes: document.getElementById('quote-notes').value.trim() || undefined,
+      });
+    }
+
+    // Run analysis
+    const data = await api('POST', `/api/repair-events/${state.repairEventId}/analyse`, {});
+    state.analysisId = data.analysis.id;
+
+    renderResults(data.analysis);
+    goTo(4);
+  } catch (e) {
+    toast('Analysis failed: ' + e.message);
+  } finally {
+    setLoading(btn, false);
+  }
+});
+
+// ── Results rendering ──────────────────────────────────────────────────────
+function renderResults(analysis) {
+  const lean = analysis.overall_lean;
+  const confidence = analysis.confidence;
+  const factors = analysis.factors || [];
+
+  const leanLabels = {
+    repair: { label: 'Analysis leans toward', headline: 'Repair it', sub: `Based on the information you provided about your ${state.categoryLabel || 'equipment'}.` },
+    replace: { label: 'Analysis leans toward', headline: 'Consider replacing', sub: `Based on the information you provided about your ${state.categoryLabel || 'equipment'}.` },
+    inconclusive: { label: 'Analysis result', headline: 'More information needed', sub: 'The factors are balanced or insufficient. See the details below to understand what would clarify this.' },
+  };
+  const l = leanLabels[lean] || leanLabels.inconclusive;
+
+  const confLabel = { high: '✓ High confidence', medium: '◐ Medium confidence', low: '⚬ Low confidence' }[confidence] || '';
+  const confClass = `confidence-${confidence}`;
+
+  const directionIcons = {
+    favors_repair: '✓',
+    favors_replace: '↑',
+    neutral: '—',
+    unknown: '?',
+  };
+  const directionLabels = {
+    favors_repair: 'Favors repair',
+    favors_replace: 'Favors replacement',
+    neutral: 'Neutral factor',
+    unknown: 'Insufficient data',
+  };
+
+  const hasLowData = factors.some(f => f.data_quality === 'insufficient' || f.data_quality === 'low');
+
+  let html = `
+    <div class="verdict-banner ${lean}">
+      <div class="verdict-label">${l.label}</div>
+      <div class="verdict-headline">${l.headline}</div>
+      <div class="verdict-sub">${l.sub}</div>
+      <div class="confidence-badge ${confClass}">${confLabel}</div>
+    </div>
+  `;
+
+  if (hasLowData) {
+    html += `
+      <div class="dq-warning">
+        ⚠️ Some factors have limited data. Adding the install year or a repair quote would significantly improve this analysis.
+      </div>
+    `;
+  }
+
+  html += '<div class="factors">';
+  for (const f of factors) {
+    const dir = f.direction;
+    const icon = directionIcons[dir] || '?';
+    const dirLabel = directionLabels[dir] || dir;
+    const dqNote = f.data_quality === 'insufficient' ? ' · <em>Insufficient data for this factor</em>'
+      : f.data_quality === 'low' ? ' · <em>Limited data</em>' : '';
+    html += `
+      <div class="factor-card">
+        <div class="factor-icon ${dir}">${icon}</div>
+        <div class="factor-body">
+          <div class="factor-direction ${dir}">${dirLabel}</div>
+          <div class="factor-explanation">${f.explanation}</div>
+          ${dqNote ? `<div class="factor-data-note">${dqNote}</div>` : ''}
+        </div>
+      </div>
+    `;
+  }
+  html += '</div>';
+
+  html += `
+    <div class="decision-bar">
+      <h3>What are you leaning toward?</h3>
+      <div class="decision-btns">
+        <button class="decision-btn repair" onclick="recordDecision('repair')">I'll repair it</button>
+        <button class="decision-btn replace" onclick="recordDecision('replace')">I'll replace it</button>
+        <button class="decision-btn defer" onclick="recordDecision('defer')" style="grid-column:span 2">Not sure yet — save this for later</button>
+      </div>
+    </div>
+  `;
+
+  document.getElementById('results-area').innerHTML = html;
+}
+
+async function recordDecision(choice) {
+  try {
+    await api('POST', `/api/repair-events/${state.repairEventId}/decide`, {
+      decision: choice,
+      analysisId: state.analysisId,
+    });
+    const labels = { repair: "Repair recorded ✓", replace: "Replace recorded ✓", defer: "Saved for later ✓" };
+    toast(labels[choice] || 'Saved ✓');
+    document.querySelector('.decision-bar').innerHTML = `
+      <div style="text-align:center;padding:8px 0;color:var(--k-slate)">
+        <strong style="color:var(--k-brand)">${labels[choice]}</strong><br>
+        <span style="font-size:13px">Your decision has been recorded.</span>
+      </div>
+    `;
+  } catch(e) {
+    toast('Could not save decision: ' + e.message);
+  }
+}
+
+// ── Init ───────────────────────────────────────────────────────────────────
+loadCategories();
+</script>
+</body>
+</html>

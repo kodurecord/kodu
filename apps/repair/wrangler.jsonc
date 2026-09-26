@@ -1,0 +1,32 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "kodu-repair",
+  "main": "src/index.ts",
+  "compatibility_date": "2024-11-01",
+  "compatibility_flags": ["nodejs_compat"],
+
+  // Static Assets: files in public/ are served by CF edge.
+  // run_worker_first: true routes all requests through the Worker first;
+  // the Worker handles /api/* and returns a Response, all other paths fall
+  // through to static assets automatically (Worker returns nothing for them).
+  "assets": {
+    "directory": "./public",
+    "binding": "ASSETS",
+    "run_worker_first": true
+  },
+
+  // D1 binding — development points at kodu-core-db
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "kodu-core-db",
+      "database_id": "8ccb390f-893f-4314-9dff-a3b16eb3092c"
+    }
+  ],
+
+  // Environment variables (non-secret)
+  "vars": {
+    "ENVIRONMENT": "development",
+    "APP_VERSION": "0.1.0"
+  }
+}

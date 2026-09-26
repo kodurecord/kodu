@@ -1,0 +1,24 @@
+{
+  "name": "kodu",
+  "private": true,
+  "version": "0.1.0",
+  "description": "KODU monorepo — shared packages, infrastructure, and applications",
+  "packageManager": "pnpm@9.0.0",
+  "engines": {
+    "node": ">=20.0.0",
+    "pnpm": ">=9.0.0"
+  },
+  "scripts": {
+    "build": "turbo run build",
+    "dev:repair": "turbo run dev --filter=@kodu/repair",
+    "lint": "turbo run lint",
+    "typecheck": "turbo run typecheck",
+    "migrate:local": "wrangler d1 execute kodu-core-db --local --file=./infrastructure/migrations/",
+    "migrate:remote": "wrangler d1 execute kodu-core-db --remote --file=./infrastructure/migrations/"
+  },
+  "devDependencies": {
+    "turbo": "^2.0.0",
+    "typescript": "^5.5.0",
+    "wrangler": "^3.91.0"
+  }
+}

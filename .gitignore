@@ -1,0 +1,9 @@
+node_modules/
+.turbo/
+dist/
+.wrangler/
+*.local
+.env
+.env.*
+!.env.example
+*.d1

@@ -1,0 +1,8 @@
+# Cloudflare Infrastructure IDs
+# Do not commit secrets — these are resource identifiers only.
+
+D1_DATABASE_ID=8ccb390f-893f-4314-9dff-a3b16eb3092c
+D1_DATABASE_NAME=kodu-core-db
+
+# R2 bucket — not yet created (pending R2 enable in CF Dashboard)
+# R2_BUCKET_NAME=kodu-documents

@@ -1,0 +1,8 @@
+{
+  "name": "@kodu/design-system",
+  "version": "0.1.0",
+  "private": true,
+  "description": "KODU design tokens, CSS custom properties, and shared brand components",
+  "main": "./tokens.css",
+  "scripts": {}
+}
