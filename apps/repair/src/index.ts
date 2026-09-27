@@ -31,6 +31,7 @@ import { handleAnalyse, handleAnalysis } from "./api/analysis";
 import { handleDecide } from "./api/decisions";
 import { handleVisitors, handleSessions, handleEvents } from "./api/visitors";
 import { handleReportRequest } from "./api/reports";
+import { handleMailgunWebhook } from "./api/webhooks/mailgun";
 
 export interface Env {
   DB: D1Database;
@@ -42,6 +43,12 @@ export interface Env {
   MAILGUN_DOMAIN: string;
   MAILGUN_FROM_NAME?: string;
   MAILGUN_FROM_EMAIL?: string;
+  // Mailgun webhook signing key — set via `wrangler secret put MAILGUN_WEBHOOK_SIGNING_KEY`
+  // Found at: Mailgun dashboard → Sending → Webhooks → HTTP webhook signing key
+  MAILGUN_WEBHOOK_SIGNING_KEY?: string;
+  // Cloudflare Browser Rendering binding — see wrangler.jsonc for activation instructions
+  // Type is `Fetcher` at runtime; `unknown` here to avoid requiring @cloudflare/puppeteer types
+  BROWSER?: unknown;
 }
 
 export default {
@@ -140,6 +147,11 @@ export default {
       // PDF report request (contact capture + Mailgun delivery)
       else if (path === "/api/reports" && method === "POST") {
         response = await handleReportRequest(request, db, env);
+      }
+
+      // Mailgun delivery webhooks — updates email_deliveries lifecycle state
+      else if (path === "/api/webhooks/mailgun" && method === "POST") {
+        response = await handleMailgunWebhook(request, db, env);
       }
 
       if (response) {

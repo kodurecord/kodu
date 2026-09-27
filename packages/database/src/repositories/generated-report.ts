@@ -6,6 +6,9 @@ import type {
   EmailDelivery,
   CreateEmailDeliveryInput,
   DeliveryStatus,
+  ProductWaitlist,
+  CreateWaitlistInput,
+  UpdateWaitlistStatusInput,
 } from "@kodu/entity-schema";
 import { ulid } from "../ulid";
 
@@ -156,12 +159,13 @@ export function createEmailDeliveryRepository(
       const now = new Date().toISOString();
       await db.run(
         `INSERT INTO email_deliveries (
-           id, report_id, person_id, purpose,
+           id, app, report_id, person_id, purpose,
            to_email, to_name, subject, template_key, mailgun_tag,
            status, queued_at, created_at, updated_at
-         ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'queued', ?, ?, ?)`,
+         ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'queued', ?, ?, ?)`,
         [
           id,
+          input.app ?? 'repair',
           input.reportId ?? null,
           input.personId ?? null,
           input.purpose,
@@ -207,6 +211,90 @@ export function createEmailDeliveryRepository(
           extras.lastWebhookPayload ?? null,
           extras.lastWebhookAt ?? null,
           now,
+          id,
+        ]
+      );
+    },
+  };
+}
+
+// ── Product Waitlist Repository ───────────────────────────────────────────────
+
+export interface WaitlistRepository {
+  findByPersonAndApp(personId: string, app: string): Promise<ProductWaitlist | null>;
+  findByApp(app: string, limit?: number): Promise<ProductWaitlist[]>;
+  /** Insert or ignore if the person is already on this waitlist. Returns the row. */
+  upsert(input: CreateWaitlistInput): Promise<{ waitlist: ProductWaitlist; alreadyExists: boolean }>;
+  updateStatus(id: string, update: UpdateWaitlistStatusInput): Promise<void>;
+}
+
+export function createWaitlistRepository(db: KoduD1Client): WaitlistRepository {
+  return {
+    async findByPersonAndApp(personId, app) {
+      return db.queryOne<ProductWaitlist>(
+        "SELECT * FROM product_waitlists WHERE person_id = ? AND app = ? LIMIT 1",
+        [personId, app]
+      );
+    },
+
+    async findByApp(app, limit = 100) {
+      return db.query<ProductWaitlist>(
+        "SELECT * FROM product_waitlists WHERE app = ? ORDER BY created_at DESC LIMIT ?",
+        [app, limit]
+      );
+    },
+
+    async upsert(input) {
+      // Check for existing record first (UNIQUE(person_id, app))
+      const existing = await db.queryOne<ProductWaitlist>(
+        "SELECT * FROM product_waitlists WHERE person_id = ? AND app = ? LIMIT 1",
+        [input.personId, input.app]
+      );
+
+      if (existing) {
+        return { waitlist: existing, alreadyExists: true };
+      }
+
+      const id = ulid();
+      const now = new Date().toISOString();
+      await db.run(
+        `INSERT INTO product_waitlists (
+           id, app, person_id, visitor_id, session_id,
+           status, audience_segment, source, created_at
+         ) VALUES (?, ?, ?, ?, ?, 'joined', ?, ?, ?)`,
+        [
+          id,
+          input.app,
+          input.personId,
+          input.visitorId ?? null,
+          input.sessionId ?? null,
+          input.audienceSegment ?? null,
+          input.source ?? null,
+          now,
+        ]
+      );
+
+      const created = await db.queryOne<ProductWaitlist>(
+        "SELECT * FROM product_waitlists WHERE id = ?",
+        [id]
+      );
+      if (!created) throw new Error("Failed to retrieve created product_waitlist");
+      return { waitlist: created, alreadyExists: false };
+    },
+
+    async updateStatus(id, update) {
+      await db.run(
+        `UPDATE product_waitlists
+         SET status = ?,
+             confirmed_at = COALESCE(?, confirmed_at),
+             invited_at   = COALESCE(?, invited_at),
+             activated_at = COALESCE(?, activated_at)
+         WHERE id = ?`,
+        [
+          update.status,
+          update.confirmedAt ?? null,
+          update.invitedAt ?? null,
+          update.activatedAt ?? null,
           id,
         ]
       );

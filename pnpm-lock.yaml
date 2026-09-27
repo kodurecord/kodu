@@ -18,6 +18,28 @@ importers:
         specifier: ^3.91.0
         version: 3.114.17(@cloudflare/workers-types@4.20260702.1)
 
+  apps/record:
+    dependencies:
+      '@kodu/database':
+        specifier: workspace:*
+        version: link:../../packages/database
+      '@kodu/entity-schema':
+        specifier: workspace:*
+        version: link:../../packages/entity-schema
+      '@kodu/shared-types':
+        specifier: workspace:*
+        version: link:../../packages/shared-types
+    devDependencies:
+      '@cloudflare/workers-types':
+        specifier: ^4.20260702.1
+        version: 4.20260702.1
+      typescript:
+        specifier: ^5.5.0
+        version: 5.9.3
+      wrangler:
+        specifier: ^3.91.0
+        version: 3.114.17(@cloudflare/workers-types@4.20260702.1)
+
   apps/repair:
     dependencies:
       '@kodu/database':

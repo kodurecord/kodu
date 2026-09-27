@@ -64,6 +64,7 @@ export type DeliveryPurpose =
 
 export interface EmailDelivery {
   id: string;           // ULID
+  app: KoduApp;         // originating KODU product; used for Mailgun webhook attribution
   reportId?: string;
   personId?: string;
 
@@ -91,6 +92,7 @@ export interface EmailDelivery {
 }
 
 export interface CreateEmailDeliveryInput {
+  app?: KoduApp;        // originating product; defaults to 'repair'
   reportId?: string;
   personId?: string;
   purpose: DeliveryPurpose;
@@ -99,6 +101,44 @@ export interface CreateEmailDeliveryInput {
   subject?: string;
   templateKey?: string;
   mailgunTag?: string;
+}
+
+// ── Product Waitlist ──────────────────────────────────────────────────────────
+
+export type WaitlistStatus = 'joined' | 'confirmed' | 'invited' | 'activated' | 'unsubscribed';
+
+export interface ProductWaitlist {
+  id: string;           // ULID
+  app: KoduApp;
+
+  personId: string;
+  visitorId?: string;
+  sessionId?: string;
+
+  status: WaitlistStatus;
+  audienceSegment?: string;
+  source?: string;
+
+  createdAt: string;
+  confirmedAt?: string;
+  invitedAt?: string;
+  activatedAt?: string;
+}
+
+export interface CreateWaitlistInput {
+  app: KoduApp;
+  personId: string;
+  visitorId?: string;
+  sessionId?: string;
+  audienceSegment?: string;
+  source?: string;
+}
+
+export interface UpdateWaitlistStatusInput {
+  status: WaitlistStatus;
+  confirmedAt?: string;
+  invitedAt?: string;
+  activatedAt?: string;
 }
 
 // ── Communication Consent ─────────────────────────────────────────────────────

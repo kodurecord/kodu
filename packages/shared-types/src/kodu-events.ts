@@ -29,14 +29,40 @@ export const KODU_EVENTS = {
   CONTACT_SUBMITTED:        'contact_submitted',
   MARKETING_OPT_IN:         'marketing_opt_in',
   PDF_GENERATED:            'pdf_generated',
+  // NOTE: PDF_DELIVERED is legacy — prefer EMAIL_DELIVERED (set via Mailgun webhook)
   PDF_DELIVERED:            'pdf_delivered',
+
+  // ── Email Delivery Lifecycle (webhook-driven) ──────────────────────────────
+  // Emitted by the report pipeline when Mailgun accepts the send request
+  EMAIL_QUEUED:             'email_queued',
+  // Emitted by Mailgun webhook when the MTA accepts the message for delivery
+  EMAIL_ACCEPTED:           'email_accepted',
+  // Emitted by Mailgun webhook when the recipient's server confirms delivery
+  EMAIL_DELIVERED:          'email_delivered',
+  // Emitted by Mailgun webhook on permanent delivery failure
+  EMAIL_FAILED:             'email_failed',
+  // Emitted by Mailgun webhook on soft bounce
+  EMAIL_BOUNCED:            'email_bounced',
+  // Emitted by Mailgun webhook when recipient marks as spam
+  EMAIL_COMPLAINED:         'email_complained',
+  // Emitted by Mailgun webhook on unsubscribe
+  EMAIL_UNSUBSCRIBED:       'email_unsubscribed',
 
   // ── CTA / Affiliate ────────────────────────────────────────────────────────
   CTA_CLICKED:              'cta_clicked',
 
-  // ── Warranty / Permit / Record (future products) ───────────────────────────
+  // ── Warranty / Permit (future products) ───────────────────────────────────
   WARRANTY_CHECK_STARTED:   'warranty_check_started',
   PERMIT_LOOKUP_STARTED:    'permit_lookup_started',
+
+  // ── KODU Record Waitlist ───────────────────────────────────────────────────
+  RECORD_LANDING_VIEWED:                  'record_landing_viewed',
+  RECORD_WAITLIST_CTA_VIEWED:             'record_waitlist_cta_viewed',
+  RECORD_WAITLIST_CTA_CLICKED:            'record_waitlist_cta_clicked',
+  RECORD_WAITLIST_FORM_VIEWED:            'record_waitlist_form_viewed',
+  RECORD_WAITLIST_SUBMITTED:              'record_waitlist_submitted',
+  RECORD_WAITLIST_CONFIRMATION_SENT:      'record_waitlist_confirmation_sent',
+  RECORD_WAITLIST_CONFIRMATION_DELIVERED: 'record_waitlist_confirmation_delivered',
 
   // ── Identity ───────────────────────────────────────────────────────────────
   ACCOUNT_CREATED:          'account_created',

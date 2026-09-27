@@ -49,10 +49,12 @@ export type { EventRepository } from "./repositories/event";
 export {
   createGeneratedReportRepository,
   createEmailDeliveryRepository,
+  createWaitlistRepository,
 } from "./repositories/generated-report";
 export type {
   GeneratedReportRepository,
   EmailDeliveryRepository,
+  WaitlistRepository,
 } from "./repositories/generated-report";
 
 export { createConsentRepository } from "./repositories/consent";

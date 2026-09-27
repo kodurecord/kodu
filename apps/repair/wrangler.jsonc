@@ -24,6 +24,19 @@
     }
   ],
 
+  // ── Browser Rendering (PDF generation) ───────────────────────────────────
+  // Uncomment to enable real PDF output via Cloudflare Browser Rendering.
+  // Prerequisites:
+  //   1. Paid Cloudflare Workers plan (Browser Rendering is not on Free)
+  //   2. pnpm add @cloudflare/puppeteer --filter kodu-repair
+  //   3. Pass env.BROWSER into generatePdf() (already wired in api/reports.ts)
+  //   4. Deploy with `wrangler deploy`
+  //
+  // Without this binding, generatePdf() degrades gracefully to HTML-only
+  // with degradationReason: 'browser_binding_missing' (never silently treated as PDF).
+  //
+  // "browser": { "binding": "BROWSER" },
+
   // Environment variables (non-secret)
   "vars": {
     "ENVIRONMENT": "development",

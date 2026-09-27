@@ -25,7 +25,7 @@ import {
 } from "@kodu/database";
 import type { KoduD1Client } from "@kodu/database";
 import { KODU_EVENTS } from "@kodu/shared-types";
-import { generateReportHtml } from "../services/pdf";
+import { generatePdf } from "../services/pdf";
 import { sendEmail, buildReportEmailHtml, buildReportEmailText } from "../services/email";
 import type { EmailEnv } from "../services/email";
 
@@ -53,7 +53,7 @@ interface ReportRequestBody {
 export async function handleReportRequest(
   request: Request,
   db: KoduD1Client,
-  env: EmailEnv & { CF_WORKER_ENV?: string }
+  env: EmailEnv & { CF_WORKER_ENV?: string; BROWSER?: unknown }
 ): Promise<Response> {
   let body: ReportRequestBody;
   try {
@@ -150,23 +150,9 @@ export async function handleReportRequest(
     });
   }
 
-  // ── 5. Create generated_report record ─────────────────────────────────────
+  // ── 5. Create generated_report record (pending) ───────────────────────────
 
-  const report = await reportRepo.create({
-    app: 'repair',
-    repairEventId: repairEventId,
-    analysisId: body.analysisId,
-    personId: person.id as string,
-    visitorId: body.visitorId,
-    sessionId: body.sessionId,
-    reportType: 'repair_analysis',
-    reportVersion: '1',
-    format: 'html',
-  });
-
-  const reportId = (report as unknown as Record<string, unknown>)['id'] as string;
-
-  // ── 6. Generate HTML report ───────────────────────────────────────────────
+  const generatedAt = new Date().toISOString();
 
   // Gather equipment label from analysis properties or repair_event if available
   let equipmentLabel = 'your equipment';
@@ -183,19 +169,49 @@ export async function handleReportRequest(
     }
   } catch { /* use defaults */ }
 
-  const reportHtml = generateReportHtml({
-    reportId,
-    firstName,
-    email,
-    equipmentLabel,
-    categoryKey,
-    overallLean,
-    confidence,
-    factors,
-    repairQuoteTotal,
-    engineVersion,
-    generatedAt: new Date().toISOString(),
+  // Format is set after PDF generation; start with 'html' as the conservative default
+  const report = await reportRepo.create({
+    app: 'repair',
+    repairEventId: repairEventId,
+    analysisId: body.analysisId,
+    personId: person.id as string,
+    visitorId: body.visitorId,
+    sessionId: body.sessionId,
+    reportType: 'repair_analysis',
+    reportVersion: '1',
+    format: 'html', // updated below after generation
   });
+
+  const reportId = (report as unknown as Record<string, unknown>)['id'] as string;
+
+  // ── 6. Generate report (PDF if BROWSER binding present; HTML fallback) ─────
+
+  const pdfResult = await generatePdf(
+    {
+      reportId,
+      firstName,
+      email,
+      equipmentLabel,
+      categoryKey,
+      overallLean,
+      confidence,
+      factors,
+      repairQuoteTotal,
+      engineVersion,
+      generatedAt,
+    },
+    env.BROWSER  // undefined → explicit HTML degradation; populated → real PDF
+  );
+
+  const reportFormat = pdfResult.format; // 'pdf' | 'html'
+  const reportHtml = pdfResult.html;
+  const pdfBytes = pdfResult.format === 'pdf' ? pdfResult.pdfBytes : undefined;
+
+  // Log degradation so ops can confirm binding status
+  if (reportFormat === 'html') {
+    const reason = (pdfResult as { degradationReason?: string }).degradationReason ?? 'unknown';
+    console.warn(`[reports] PDF degraded to HTML (reason: ${reason}) for report ${reportId}`);
+  }
 
   // ── 7. Send via Mailgun ───────────────────────────────────────────────────
 
@@ -205,14 +221,16 @@ export async function handleReportRequest(
   let deliveryStatus: 'queued' | 'failed' = 'queued';
   let deliveryError: string | undefined;
 
-  // Email body: brief wrapper email + full report HTML inline
+  const hasPdfAttachment = reportFormat === 'pdf' && !!pdfBytes;
+
+  // Email body: brief wrapper + full report HTML inline; PDF attached when available
   const emailHtml = buildReportEmailHtml({
     firstName,
     overallLean,
     equipmentLabel,
     reportId,
-    hasPdfAttachment: false, // v1: report is inline HTML
-  }) + '\n\n<hr/>\n\n' + reportHtml;
+    hasPdfAttachment,
+  }) + (hasPdfAttachment ? '' : '\n\n<hr/>\n\n' + reportHtml);
 
   const emailText = buildReportEmailText({ firstName, overallLean, equipmentLabel });
 
@@ -230,6 +248,10 @@ export async function handleReportRequest(
         htmlBody: emailHtml,
         textBody: emailText,
         tag: 'repair-report',
+        ...(hasPdfAttachment && pdfBytes ? {
+          pdfBytes,
+          pdfFilename: `kodu-repair-report-${reportId}.pdf`,
+        } : {}),
       });
       mailgunMessageId = result.messageId;
     } catch (err) {
@@ -264,11 +286,21 @@ export async function handleReportRequest(
     });
   }
 
-  // ── 9. Update report status ───────────────────────────────────────────────
+  // ── 9. Update report status + format ─────────────────────────────────────
 
   await reportRepo.updateStatus(reportId, 'ready', {
-    generatedAt: new Date().toISOString(),
+    generatedAt,
   });
+
+  // Patch format to 'pdf' when we successfully produced binary PDF bytes.
+  // The row was created with format='html' as a safe default; we update it
+  // here after confirmed generation rather than racing with a failed render.
+  if (reportFormat === 'pdf') {
+    await db.run(
+      "UPDATE generated_reports SET format = 'pdf', updated_at = ? WHERE id = ?",
+      [new Date().toISOString(), reportId]
+    );
+  }
 
   // ── 10. Batch events ──────────────────────────────────────────────────────
 
@@ -295,13 +327,16 @@ export async function handleReportRequest(
       eventName: KODU_EVENTS.PDF_GENERATED,
       properties: {
         report_id: reportId,
-        format: 'html',
+        format: reportFormat,  // 'pdf' or 'html' — reflects actual artifact type
         engine_version: engineVersion,
       },
     },
+    // EMAIL_QUEUED = Mailgun accepted the API request (NOT confirmed delivery).
+    // EMAIL_DELIVERED is emitted only from the Mailgun webhook when the
+    // recipient's server confirms receipt. Do not conflate these two states.
     ...(mailgunMessageId ? [{
       ...baseEvent,
-      eventName: KODU_EVENTS.PDF_DELIVERED,
+      eventName: KODU_EVENTS.EMAIL_QUEUED,
       properties: {
         report_id: reportId,
         delivery_id: deliveryId,

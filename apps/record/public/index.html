@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>KODU Record — Your Home's Intelligence File</title>
+  <meta name="description" content="KODU Record gives homeowners a living record of their property — equipment, maintenance history, warranties, permits, and what it's all worth. Join the waitlist." />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --navy:      #0f1c2e;
+      --teal:      #1d7a6b;
+      --teal-lt:   #e4f3f1;
+      --gold:      #c9a227;
+      --bg:        #f7f9fc;
+      --text:      #1a1a2e;
+      --muted:     #64748b;
+      --border:    #e2e8f0;
+      --white:     #ffffff;
+      --radius:    8px;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    /* ── Navigation ─────────────────────────────────────────────────────── */
+
+    .nav {
+      background: var(--navy);
+      padding: 0 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 56px;
+    }
+    .nav-brand {
+      color: var(--white);
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: -.01em;
+    }
+    .nav-brand span { color: var(--gold); }
+    .nav-cta {
+      background: var(--teal);
+      color: var(--white);
+      border: none;
+      border-radius: var(--radius);
+      padding: 8px 18px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+    }
+    .nav-cta:hover { background: #1a6b5e; }
+
+    /* ── Hero ───────────────────────────────────────────────────────────── */
+
+    .hero {
+      background: var(--navy);
+      color: var(--white);
+      padding: 72px 24px 80px;
+      text-align: center;
+    }
+    .hero-label {
+      display: inline-block;
+      background: rgba(255,255,255,.1);
+      border: 1px solid rgba(255,255,255,.2);
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      padding: 5px 14px;
+      margin-bottom: 24px;
+      color: rgba(255,255,255,.8);
+    }
+    .hero h1 {
+      font-size: clamp(28px, 5vw, 48px);
+      font-weight: 800;
+      line-height: 1.15;
+      letter-spacing: -.02em;
+      max-width: 640px;
+      margin: 0 auto 20px;
+    }
+    .hero h1 span { color: var(--gold); }
+    .hero-sub {
+      font-size: 18px;
+      color: rgba(255,255,255,.75);
+      max-width: 520px;
+      margin: 0 auto 40px;
+    }
+    .hero-cta-group {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .btn-primary {
+      background: var(--teal);
+      color: var(--white);
+      border: none;
+      border-radius: var(--radius);
+      padding: 14px 28px;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background .15s;
+    }
+    .btn-primary:hover { background: #1a6b5e; }
+    .btn-ghost {
+      background: transparent;
+      color: rgba(255,255,255,.8);
+      border: 1px solid rgba(255,255,255,.3);
+      border-radius: var(--radius);
+      padding: 14px 28px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+    }
+    .btn-ghost:hover { border-color: rgba(255,255,255,.6); }
+
+    /* ── Value props ────────────────────────────────────────────────────── */
+
+    .features {
+      padding: 72px 24px;
+      max-width: 960px;
+      margin: 0 auto;
+    }
+    .features-header {
+      text-align: center;
+      margin-bottom: 48px;
+    }
+    .features-header h2 {
+      font-size: 28px;
+      font-weight: 800;
+      color: var(--navy);
+      margin-bottom: 10px;
+    }
+    .features-header p {
+      color: var(--muted);
+      font-size: 16px;
+    }
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 24px;
+    }
+    .feature-card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 28px 24px;
+    }
+    .feature-icon {
+      font-size: 28px;
+      margin-bottom: 12px;
+    }
+    .feature-card h3 {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--navy);
+      margin-bottom: 8px;
+    }
+    .feature-card p {
+      font-size: 14px;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    /* ── Waitlist form ──────────────────────────────────────────────────── */
+
+    .waitlist-section {
+      background: var(--teal-lt);
+      border-top: 1px solid #c8e8e4;
+      border-bottom: 1px solid #c8e8e4;
+      padding: 64px 24px;
+    }
+    .waitlist-inner {
+      max-width: 480px;
+      margin: 0 auto;
+      text-align: center;
+    }
+    .waitlist-inner h2 {
+      font-size: 26px;
+      font-weight: 800;
+      color: var(--navy);
+      margin-bottom: 10px;
+    }
+    .waitlist-inner p {
+      color: var(--muted);
+      font-size: 15px;
+      margin-bottom: 32px;
+    }
+    .waitlist-form {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    .form-field {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      text-align: left;
+    }
+    .form-field label {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--navy);
+    }
+    .form-field input[type="text"],
+    .form-field input[type="email"] {
+      width: 100%;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 11px 14px;
+      font-size: 15px;
+      color: var(--text);
+      background: var(--white);
+      transition: border-color .15s;
+    }
+    .form-field input:focus {
+      outline: none;
+      border-color: var(--teal);
+      box-shadow: 0 0 0 3px rgba(29,122,107,.12);
+    }
+    .form-checkbox {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      text-align: left;
+      font-size: 13px;
+      color: var(--muted);
+      cursor: pointer;
+    }
+    .form-checkbox input { margin-top: 3px; flex-shrink: 0; }
+    .btn-submit {
+      background: var(--teal);
+      color: var(--white);
+      border: none;
+      border-radius: var(--radius);
+      padding: 14px;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background .15s;
+      width: 100%;
+    }
+    .btn-submit:hover:not(:disabled) { background: #1a6b5e; }
+    .btn-submit:disabled { opacity: .6; cursor: not-allowed; }
+    .form-legal {
+      font-size: 12px;
+      color: var(--muted);
+      text-align: center;
+    }
+    .form-error {
+      background: #fef3cd;
+      border: 1px solid #f5c542;
+      border-radius: var(--radius);
+      padding: 10px 14px;
+      font-size: 13px;
+      color: #7d5a00;
+      display: none;
+    }
+    .form-error.visible { display: block; }
+
+    /* ── Success state ──────────────────────────────────────────────────── */
+
+    .waitlist-success {
+      display: none;
+      text-align: center;
+    }
+    .waitlist-success.visible { display: block; }
+    .waitlist-success .success-icon { font-size: 48px; margin-bottom: 16px; }
+    .waitlist-success h3 {
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--navy);
+      margin-bottom: 10px;
+    }
+    .waitlist-success p { color: var(--muted); font-size: 15px; }
+    #waitlist-form-container.hidden { display: none; }
+
+    /* ── Social proof ───────────────────────────────────────────────────── */
+
+    .social-proof {
+      padding: 56px 24px;
+      max-width: 720px;
+      margin: 0 auto;
+      text-align: center;
+    }
+    .social-proof-label {
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 32px;
+    }
+    .testimonials {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+    }
+    .testimonial {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+      text-align: left;
+    }
+    .testimonial blockquote {
+      font-size: 14px;
+      color: var(--text);
+      line-height: 1.6;
+      margin-bottom: 12px;
+      font-style: italic;
+    }
+    .testimonial cite {
+      font-size: 12px;
+      color: var(--muted);
+      font-style: normal;
+      font-weight: 600;
+    }
+
+    /* ── Footer ─────────────────────────────────────────────────────────── */
+
+    .footer {
+      background: var(--navy);
+      color: rgba(255,255,255,.5);
+      text-align: center;
+      padding: 32px 24px;
+      font-size: 13px;
+    }
+    .footer a { color: rgba(255,255,255,.6); text-decoration: none; }
+    .footer a:hover { color: var(--white); }
+
+    @media (max-width: 480px) {
+      .form-row { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Navigation -->
+<nav class="nav">
+  <span class="nav-brand">KODU <span>Record</span></span>
+  <button class="nav-cta" onclick="scrollToWaitlist()">Join Waitlist</button>
+</nav>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="hero-label">Coming Soon — Join the Waitlist</div>
+  <h1>Your home has a story.<br/><span>KODU Record</span> keeps it.</h1>
+  <p class="hero-sub">
+    A living record of every piece of equipment, maintenance event, warranty,
+    and permit — organized, searchable, and always up to date.
+  </p>
+  <div class="hero-cta-group">
+    <button class="btn-primary" onclick="scrollToWaitlist()" id="hero-cta-btn">
+      Join the Waitlist
+    </button>
+    <a href="https://repair.kodu.com" class="btn-ghost" target="_blank" rel="noopener">
+      Try KODU Repair →
+    </a>
+  </div>
+</section>
+
+<!-- Value propositions -->
+<section class="features">
+  <div class="features-header">
+    <h2>Everything your home ever told you, in one place.</h2>
+    <p>KODU Record connects the dots between your equipment, your history, and your property's value.</p>
+  </div>
+  <div class="features-grid">
+    <div class="feature-card">
+      <div class="feature-icon">🏠</div>
+      <h3>Equipment Registry</h3>
+      <p>Every HVAC unit, appliance, water heater, and roof — with age, model, and manufacturer details — organized by property.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">📋</div>
+      <h3>Maintenance History</h3>
+      <p>Log repairs and service visits as they happen. Know what was done, when, by whom, and what it cost — forever.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🛡️</div>
+      <h3>Warranty Tracking</h3>
+      <p>Never miss a warranty claim again. KODU tracks expiration dates and alerts you before coverage lapses.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">📄</div>
+      <h3>Permit Archive</h3>
+      <p>Store permits and inspection records. Buyers, lenders, and insurance companies will ask — KODU has them ready.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">💡</div>
+      <h3>Repair Intelligence</h3>
+      <p>Integrated with KODU Repair — get instant repair-or-replace guidance the moment something breaks, using your own history.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">📊</div>
+      <h3>Property Value Context</h3>
+      <p>Understand how your maintenance record, equipment age, and upgrade history affect what your home is worth.</p>
+    </div>
+  </div>
+</section>
+
+<!-- Waitlist form -->
+<section class="waitlist-section" id="waitlist">
+  <div class="waitlist-inner">
+    <h2>Be first in line.</h2>
+    <p>We're inviting homeowners in waves. Drop your name and email to hold your spot.</p>
+
+    <div id="waitlist-form-container">
+      <div id="form-error" class="form-error" role="alert"></div>
+      <form class="waitlist-form" id="waitlist-form" novalidate onsubmit="handleWaitlistSubmit(event)">
+        <div class="form-row">
+          <div class="form-field">
+            <label for="wl-first-name">First name</label>
+            <input type="text" id="wl-first-name" name="firstName" placeholder="Jordan" autocomplete="given-name" required />
+          </div>
+          <div class="form-field">
+            <label for="wl-email">Email</label>
+            <input type="email" id="wl-email" name="email" placeholder="you@email.com" autocomplete="email" required />
+          </div>
+        </div>
+        <label class="form-checkbox">
+          <input type="checkbox" id="wl-marketing" name="marketingOptIn" />
+          Keep me updated on KODU products, early-access programs, and homeowner guides.
+        </label>
+        <button type="submit" class="btn-submit" id="wl-submit-btn">
+          Join the Waitlist
+        </button>
+        <p class="form-legal">
+          By joining you agree to our <a href="https://kodu.com/privacy" style="color:var(--teal)">Privacy Policy</a>.
+          We'll send you a confirmation, then your invite when your spot is ready.
+        </p>
+      </form>
+    </div>
+
+    <div class="waitlist-success" id="waitlist-success">
+      <div class="success-icon">✅</div>
+      <h3>You're on the list!</h3>
+      <p>
+        Check your inbox — we just sent you a confirmation.<br/>
+        We'll be in touch when your spot is ready.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- Social proof (placeholder — replace with real testimonials) -->
+<section class="social-proof">
+  <div class="social-proof-label">What homeowners are saying</div>
+  <div class="testimonials">
+    <div class="testimonial">
+      <blockquote>"I've owned four homes. I've never had a place to actually store all this stuff — warranties, permits, repair history. KODU Record is exactly what I've needed."</blockquote>
+      <cite>— Early access tester, Denver CO</cite>
+    </div>
+    <div class="testimonial">
+      <blockquote>"When I went to sell my house, the buyers wanted to know the age of every appliance and when the roof was last serviced. KODU Record would have made that a five-minute conversation."</blockquote>
+      <cite>— Homeowner, Austin TX</cite>
+    </div>
+    <div class="testimonial">
+      <blockquote>"The KODU Repair tool already saved me $2,400 on a furnace I was about to replace. I can't wait to have that same clarity across my whole house."</blockquote>
+      <cite>— KODU Repair user, Chicago IL</cite>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer class="footer">
+  <p>
+    KODU Record is part of the <a href="https://kodu.com">KODU</a> homeowner platform. &nbsp;·&nbsp;
+    <a href="https://kodu.com/privacy">Privacy</a> &nbsp;·&nbsp;
+    <a href="https://repair.kodu.com">KODU Repair</a>
+  </p>
+  <p style="margin-top:8px;">© 2026 KODU. All rights reserved.</p>
+</footer>
+
+<script>
+// ── Identity infrastructure ───────────────────────────────────────────────────
+
+const ALPHABET = '0123456789ABCDEFGHJKMNPQRSTVWXYZ';
+
+function generateULID() {
+  const t = Date.now();
+  let result = '';
+  let time = t;
+  for (let i = 9; i >= 0; i--) {
+    result = ALPHABET[time % 32] + result;
+    time = Math.floor(time / 32);
+  }
+  for (let i = 0; i < 16; i++) {
+    result += ALPHABET[Math.floor(Math.random() * 32)];
+  }
+  return result;
+}
+
+function getOrCreateVisitorId() {
+  try {
+    let id = localStorage.getItem('kodu_visitor_id');
+    if (!id) { id = generateULID(); localStorage.setItem('kodu_visitor_id', id); }
+    return id;
+  } catch { return generateULID(); }
+}
+
+function getSessionId() {
+  try {
+    let id = sessionStorage.getItem('kodu_session_id');
+    if (!id) { id = generateULID(); sessionStorage.setItem('kodu_session_id', id); }
+    return id;
+  } catch { return generateULID(); }
+}
+
+function getUtmParams() {
+  const p = new URLSearchParams(location.search);
+  const out = {};
+  for (const k of ['utm_source','utm_medium','utm_campaign','utm_term','utm_content','gclid','fbclid']) {
+    const v = p.get(k);
+    if (v) out[k] = v;
+  }
+  return out;
+}
+
+// ── State ─────────────────────────────────────────────────────────────────────
+
+const visitorId = getOrCreateVisitorId();
+const sessionId = getSessionId();
+let identityReady = false;
+
+// ── Init ──────────────────────────────────────────────────────────────────────
+
+async function initIdentity() {
+  try {
+    await fetch('/api/visitors', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ visitorId }),
+    });
+
+    await fetch('/api/sessions', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        visitorId,
+        sessionId,
+        app: 'record',
+        ...getUtmParams(),
+      }),
+    });
+
+    identityReady = true;
+    trackEvent('record_landing_viewed', { referrer: document.referrer || null });
+  } catch (err) {
+    console.warn('[record] Identity init failed:', err);
+  }
+}
+
+async function trackEvent(eventName, properties = {}) {
+  try {
+    await fetch('/api/events', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        events: [{ visitorId, sessionId, eventName, properties, occurredAt: new Date().toISOString() }],
+      }),
+    });
+  } catch { /* non-fatal */ }
+}
+
+// ── CTA scroll + tracking ─────────────────────────────────────────────────────
+
+let ctaTracked = false;
+function scrollToWaitlist() {
+  if (!ctaTracked) {
+    trackEvent('record_waitlist_cta_clicked');
+    ctaTracked = true;
+  }
+  document.getElementById('waitlist').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+// Track CTA visibility
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      trackEvent('record_waitlist_cta_viewed');
+      observer.disconnect();
+    }
+  });
+}, { threshold: 0.5 });
+observer.observe(document.getElementById('waitlist'));
+
+// Track form visibility
+const formObserver = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      trackEvent('record_waitlist_form_viewed');
+      formObserver.disconnect();
+    }
+  });
+}, { threshold: 0.5 });
+formObserver.observe(document.getElementById('waitlist-form-container'));
+
+// ── Waitlist form submission ──────────────────────────────────────────────────
+
+async function handleWaitlistSubmit(event) {
+  event.preventDefault();
+
+  const firstName = document.getElementById('wl-first-name').value.trim();
+  const email = document.getElementById('wl-email').value.trim().toLowerCase();
+  const marketingOptIn = document.getElementById('wl-marketing').checked;
+
+  const errorEl = document.getElementById('form-error');
+  const submitBtn = document.getElementById('wl-submit-btn');
+
+  // Client-side validation
+  if (!firstName) { showError('Please enter your first name.'); return; }
+  if (!email || !email.includes('@')) { showError('Please enter a valid email address.'); return; }
+
+  clearError();
+  submitBtn.disabled = true;
+  submitBtn.textContent = 'Joining…';
+
+  trackEvent('record_waitlist_submitted', { has_marketing_opt_in: marketingOptIn });
+
+  try {
+    const res = await fetch('/api/waitlist', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        firstName,
+        email,
+        marketingOptIn,
+        visitorId,
+        sessionId,
+        source: getUtmSource(),
+      }),
+    });
+
+    if (!res.ok && res.status !== 200 && res.status !== 201) {
+      const data = await res.json().catch(() => ({}));
+      throw new Error(data.error || `Server error ${res.status}`);
+    }
+
+    // Success
+    document.getElementById('waitlist-form-container').classList.add('hidden');
+    document.getElementById('waitlist-success').classList.add('visible');
+
+  } catch (err) {
+    showError(err.message || 'Something went wrong. Please try again.');
+    submitBtn.disabled = false;
+    submitBtn.textContent = 'Join the Waitlist';
+  }
+}
+
+function getUtmSource() {
+  const p = new URLSearchParams(location.search);
+  const src = p.get('utm_source');
+  const medium = p.get('utm_medium');
+  if (src) return `${src}${medium ? `_${medium}` : ''}`;
+  if (document.referrer) {
+    try { return new URL(document.referrer).hostname; } catch { return 'referral'; }
+  }
+  return 'direct';
+}
+
+function showError(msg) {
+  const el = document.getElementById('form-error');
+  el.textContent = msg;
+  el.classList.add('visible');
+}
+
+function clearError() {
+  const el = document.getElementById('form-error');
+  el.textContent = '';
+  el.classList.remove('visible');
+}
+
+// ── Boot ──────────────────────────────────────────────────────────────────────
+
+initIdentity();
+</script>
+</body>
+</html>

@@ -1,23 +1,31 @@
 /**
  * KODU PDF Generation Service
  *
- * v1 generates a plain-text/HTML representation of the analysis report
- * formatted as an email-ready PDF-like document.
+ * Generates a real binary PDF of the analysis report using
+ * Cloudflare Browser Rendering (the `@cloudflare/puppeteer` binding).
  *
- * Full PDF generation (binary PDF bytes) requires a headless browser or
- * a PDF generation library. In Cloudflare Workers, options are:
- *   - Cloudflare Browser Rendering (Workers + Puppeteer binding)
- *   - html-pdf-chrome via a Cloudflare Queue consumer
- *   - External API (PDFMonkey, DocRaptor, etc.)
+ * ── Infrastructure requirement ────────────────────────────────────────────────
+ * This service requires:
+ *   1. A `browser` binding of type `browser` in wrangler.jsonc:
+ *        { "browser": { "binding": "BROWSER" } }
+ *   2. The Worker must be on a plan that includes Browser Rendering
+ *      (Paid Workers plans; not available on Workers Free).
+ *   3. `@cloudflare/puppeteer` installed as a Worker dependency.
  *
- * For v1: generate a self-contained HTML string that is emailed directly
- * (no binary PDF attachment). The email contains the full report inline.
- * The generated_reports.format is set to 'html' until binary PDF is wired.
+ * Until the binding is configured, generatePdf() detects its absence and
+ * falls back to returning the HTML representation with format='html'.
+ * This fallback is explicit — the caller sees the format and must NOT
+ * treat it as a PDF or label it as such to the homeowner.
  *
- * When a real PDF provider is connected:
- *   1. Set env.PDF_PROVIDER = 'browser_rendering' | 'pdfmonkey' | etc.
- *   2. Implement the provider branch below.
- *   3. Update generated_reports.format = 'pdf' and store r2_key.
+ * ── Degradation contract ──────────────────────────────────────────────────────
+ * PdfResult.format === 'html'  → binary PDF was not produced; html only
+ * PdfResult.format === 'pdf'   → pdfBytes is populated; html is also available
+ *
+ * ── To activate ───────────────────────────────────────────────────────────────
+ *   1. Add browser binding to wrangler.jsonc (see comment in that file)
+ *   2. pnpm add @cloudflare/puppeteer --filter kodu-repair
+ *   3. Pass env.BROWSER into generatePdf()
+ *   4. Deploy on a paid Cloudflare Workers plan
  */
 
 export interface PdfInput {
@@ -41,15 +49,16 @@ export interface PdfInput {
 
 export interface PdfResult {
   format: 'html' | 'pdf';
-  html: string;           // always populated — used as email body
-  pdfBytes?: ArrayBuffer; // populated only when binary PDF is generated
-  r2Key?: string;         // populated when stored to R2
+  /** Always set — used as email body and PDF source HTML */
+  html: string;
+  /** Set only when format === 'pdf' */
+  pdfBytes?: ArrayBuffer;
+  /** Set only when stored to R2 */
+  r2Key?: string;
 }
 
-/**
- * Generate the report content.
- * Returns both HTML (for email body) and optionally binary PDF bytes.
- */
+// ── HTML template (source for both email body and PDF rendering) ──────────────
+
 export function generateReportHtml(input: PdfInput): string {
   const directionIcon = (d: string) =>
     d === 'favors_repair' ? '✅' :
@@ -165,4 +174,70 @@ export function generateReportHtml(input: PdfInput): string {
 </div>
 </body>
 </html>`;
+}
+
+// ── PDF generation via Cloudflare Browser Rendering ──────────────────────────
+
+/**
+ * Attempt to render the HTML to a real PDF using the BROWSER binding.
+ *
+ * Pass `browserBinding` from env.BROWSER (type: Fetcher, the CF puppeteer
+ * binding). If the binding is absent or PDF rendering fails, returns
+ * format='html' (degraded mode) with a clear degradationReason.
+ */
+export async function generatePdf(
+  input: PdfInput,
+  browserBinding?: unknown
+): Promise<PdfResult> {
+  const html = generateReportHtml(input);
+
+  // ── No browser binding: explicit degradation ──────────────────────────────
+  if (!browserBinding) {
+    console.warn(
+      '[pdf] BROWSER binding not configured. ' +
+      'Report will be sent as inline HTML. ' +
+      'To produce a real PDF: add browser binding to wrangler.jsonc, ' +
+      'install @cloudflare/puppeteer, and deploy on a paid Workers plan.'
+    );
+    return { format: 'html', html, degradationReason: 'browser_binding_missing' } as PdfResult & { degradationReason: string };
+  }
+
+  // ── Attempt PDF rendering ─────────────────────────────────────────────────
+  try {
+    // Dynamic import — @cloudflare/puppeteer is a Worker-only package
+    // that cannot be imported in local tsc/jest environments.
+    // The import will succeed at Worker runtime when the binding is present.
+    // @ts-expect-error — @cloudflare/puppeteer is not installed as a dev dep;
+    // install it only for production CF Worker builds (see wrangler.jsonc comment).
+    const puppeteer = await import('@cloudflare/puppeteer');
+    const browser = await (puppeteer as any).default.launch(browserBinding as any);
+
+    try {
+      const page = await browser.newPage();
+
+      // Set the HTML content directly (no network fetch needed)
+      await page.setContent(html, { waitUntil: 'networkidle0' });
+
+      const pdfBytes = await page.pdf({
+        format: 'Letter',
+        printBackground: true,
+        margin: { top: '0', right: '0', bottom: '0', left: '0' },
+      }) as ArrayBuffer;
+
+      return { format: 'pdf', html, pdfBytes };
+    } finally {
+      await browser.close();
+    }
+  } catch (err) {
+    // If @cloudflare/puppeteer is not installed or rendering fails,
+    // fall back to HTML with an explicit reason — never silently treat
+    // an HTML file as a PDF.
+    const reason = err instanceof Error ? err.message : String(err);
+    console.error('[pdf] PDF rendering failed, degrading to HTML:', reason);
+    return {
+      format: 'html',
+      html,
+      degradationReason: `render_failed: ${reason}`,
+    } as PdfResult & { degradationReason: string };
+  }
 }
