@@ -39,7 +39,7 @@
 
   // Environment variables (non-secret)
   "vars": {
-    "ENVIRONMENT": "development",
+    "ENVIRONMENT": "production",
     "APP_VERSION": "0.1.0"
   }
 }
