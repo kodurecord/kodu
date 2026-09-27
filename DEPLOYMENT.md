@@ -8,7 +8,7 @@
 
 | Product | Domain | Repo Path | CF Resource | DB | Email | Current State |
 |---------|--------|-----------|-------------|-----|-------|---------------|
-| **KODU Repair** | repair.kodu.com | `apps/repair` | Worker: `kodu-repair` (deploy now) | kodu-core-db (shared) | Mailgun | Worker ready; needs DNS CNAME + secrets |
+| **KODU Repair** | kodurepair.com | `apps/repair` | Worker: `kodu-repair` (deploy now) | kodu-core-db (shared) | Mailgun | Worker ready; needs DNS CNAME + secrets |
 | **KODU Record** | kodurecord.com | `apps/record` | Worker: `kodu-record` (deploy now, waitlist only) | kodu-core-db (shared) | Mailgun | Worker ready; needs DNS CNAME + secrets; keep existing CF Pages site live until DNS cutover is approved |
 | **KODU Record (existing)** | kodurecord.com | `kodurecord/kodu-marketing-site` | CF Pages: existing deployment | — | — | **Do not touch.** Stays live until explicit DNS cutover approval. |
 | **KODU Warranty** | — | not yet | — | — | — | Planned; not started |
@@ -165,11 +165,11 @@ In the **Mailgun dashboard** (https://app.mailgun.com → Sending → Webhooks):
 
 | Event | Webhook URL |
 |-------|-------------|
-| Delivered | `https://repair.kodu.com/api/webhooks/mailgun` |
-| Failed (permanent) | `https://repair.kodu.com/api/webhooks/mailgun` |
-| Failed (temporary) | `https://repair.kodu.com/api/webhooks/mailgun` |
-| Complained | `https://repair.kodu.com/api/webhooks/mailgun` |
-| Unsubscribed | `https://repair.kodu.com/api/webhooks/mailgun` |
+| Delivered | `https://kodurepair.com/api/webhooks/mailgun` |
+| Failed (permanent) | `https://kodurepair.com/api/webhooks/mailgun` |
+| Failed (temporary) | `https://kodurepair.com/api/webhooks/mailgun` |
+| Complained | `https://kodurepair.com/api/webhooks/mailgun` |
+| Unsubscribed | `https://kodurepair.com/api/webhooks/mailgun` |
 | Opened | (optional — not currently mapped to a KODU event) |
 | Clicked | (optional) |
 
@@ -183,25 +183,26 @@ If you want `kodu-record` to handle its own webhooks (separate route), add `POST
 
 ### Step 7 — DNS Configuration
 
-#### 7a. `repair.kodu.com` → `kodu-repair` Worker
+#### 7a. `kodurepair.com` → `kodu-repair` Worker
 
-In your DNS provider (wherever `kodu.com` is managed):
+In your DNS provider (wherever `kodurepair.com` is managed):
 
 ```
 Type:    CNAME
-Name:    repair
+Name:    @  (or www for www.kodurepair.com)
 Value:   kodu-repair.<account-subdomain>.workers.dev
 TTL:     300 (or lowest available during cutover)
 ```
 
 Then in the Cloudflare Dashboard → Workers & Pages → `kodu-repair` → Settings → Domains & Routes:
 
-- Add custom domain: `repair.kodu.com`
+- Add custom domain: `kodurepair.com`
 
 Or via wrangler in `wrangler.jsonc` (append before deploying):
 ```jsonc
 "routes": [
-  { "pattern": "repair.kodu.com/*", "zone_name": "kodu.com" }
+  { "pattern": "kodurepair.com/*", "zone_name": "kodurepair.com" },
+  { "pattern": "www.kodurepair.com/*", "zone_name": "kodurepair.com" }
 ]
 ```
 
@@ -277,8 +278,8 @@ Or manage per-environment with `[env.production]` blocks in wrangler.jsonc.
 - [ ] Repair Worker secrets set: `MAILGUN_API_KEY`, `MAILGUN_DOMAIN`, `MAILGUN_FROM_NAME`, `MAILGUN_FROM_EMAIL`, `MAILGUN_WEBHOOK_SIGNING_KEY`
 - [ ] `kodu-record` Worker deployed (`wrangler deploy` from `apps/record`)
 - [ ] Record Worker secrets set: same Mailgun secrets
-- [ ] Mailgun webhooks configured pointing to `repair.kodu.com/api/webhooks/mailgun` (or workers.dev URL until DNS is live)
-- [ ] DNS CNAME for `repair.kodu.com` created and propagated
+- [ ] Mailgun webhooks configured pointing to `kodurepair.com/api/webhooks/mailgun` (or workers.dev URL until DNS is live)
+- [ ] DNS CNAME for `kodurepair.com` created and propagated
 - [ ] Cloudflare custom domain added to `kodu-repair` Worker
 - [ ] `kodu-record` Worker tested at workers.dev URL (waitlist form submits, confirmation email arrives, D1 has waitlist row)
 - [ ] DNS cutover for `kodurecord.com` (separate approval required — existing CF Pages site stays live until then)

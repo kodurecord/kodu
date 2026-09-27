@@ -126,7 +126,7 @@ export function buildReportEmailHtml(opts: {
 <body>
 <div class="wrapper">
   <div class="header">
-    <img src="https://repair.kodu.com/kodu-logo.png" alt="KODU" />
+    <img src="https://kodurepair.com/kodu-logo.png" alt="KODU" />
   </div>
   <div class="body">
     <h1>Hi ${opts.firstName}, your KODU Repair Report is ready.</h1>

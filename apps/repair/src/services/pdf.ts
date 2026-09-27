@@ -127,7 +127,7 @@ export function generateReportHtml(input: PdfInput): string {
 <body>
 <div class="page">
   <div class="header">
-    <img src="https://repair.kodu.com/kodu-logo.png" alt="KODU"/>
+    <img src="https://kodurepair.com/kodu-logo.png" alt="KODU"/>
     <span class="header-title">Repair Report</span>
   </div>
 
